@@ -1625,7 +1625,7 @@ function showView(name, el) {
     const mode = window._deptView || 'grid';
     document.getElementById('dept-grid-view').style.display = mode === 'grid' ? '' : 'none';
     const hier = document.getElementById('dept-hierarchy');
-    if (mode === 'hierarchy') { hier.style.display = ''; renderHierarchy(); }
+    if (mode === 'hierarchy') { hier.style.display = 'block'; renderHierarchy(); }
     else hier.style.display = 'none';
     document.getElementById('vmt-grid').classList.toggle('active', mode === 'grid');
     document.getElementById('vmt-hierarchy').classList.toggle('active', mode === 'hierarchy');
@@ -1682,7 +1682,7 @@ function setDeptView(mode) {
   document.getElementById('dept-grid-view').style.display = mode === 'grid' ? '' : 'none';
   const hier = document.getElementById('dept-hierarchy');
   if (mode === 'hierarchy') {
-    hier.style.display = '';
+    hier.style.display = 'block';
     renderHierarchy();
   } else {
     hier.style.display = 'none';
