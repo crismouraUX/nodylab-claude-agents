@@ -1028,41 +1028,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
 
     <div class="agent-status-mini">
       <div class="asm-title">Agent Status</div>
-      <div class="asm-row">
-        <div class="asm-dot online"></div>
-        <div class="asm-name">CEO</div>
-        <div class="asm-role">active</div>
-      </div>
-      <div class="asm-row">
-        <div class="asm-dot busy"></div>
-        <div class="asm-name">CMO</div>
-        <div class="asm-role">running</div>
-      </div>
-      <div class="asm-row">
-        <div class="asm-dot online"></div>
-        <div class="asm-name">CTO</div>
-        <div class="asm-role">active</div>
-      </div>
-      <div class="asm-row">
-        <div class="asm-dot busy"></div>
-        <div class="asm-name">SDR</div>
-        <div class="asm-role">running</div>
-      </div>
-      <div class="asm-row">
-        <div class="asm-dot online"></div>
-        <div class="asm-name">Token Analyst</div>
-        <div class="asm-role">monitoring</div>
-      </div>
-      <div class="asm-row">
-        <div class="asm-dot idle"></div>
-        <div class="asm-name">Finance</div>
-        <div class="asm-role">idle</div>
-      </div>
-      <div class="asm-row">
-        <div class="asm-dot online"></div>
-        <div class="asm-name">CFO</div>
-        <div class="asm-role">active</div>
-      </div>
+      <div id="agent-status-list"></div>
     </div>
   </div>
 
@@ -1970,6 +1936,7 @@ async function sendMsg() {
 
   const apiKey = localStorage.getItem('nodylab_api_key');
   if (apiKey) {
+    setAgentLive(agentId, true);
     try {
       const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -2000,10 +1967,12 @@ async function sendMsg() {
           </div>
         </div>`;
         msgs.scrollTop = msgs.scrollHeight;
+        setAgentLive(agentId, false);
         return;
       }
       throw new Error('empty');
     } catch(err) {
+      setAgentLive(agentId, false);
       fallbackReply(thinkId, a, agentId);
     }
   } else {
@@ -2071,11 +2040,36 @@ document.querySelectorAll('.toggle-switch').forEach(t => {
   t.addEventListener('click', () => t.classList.toggle('off'));
 });
 
+// ── SIDEBAR AGENT STATUS ──
+const _agentLiveStatus = {}; // agentId → 'running' | null
+
+function renderSidebarStatus() {
+  const list = document.getElementById('agent-status-list');
+  if (!list) return;
+  list.innerHTML = agentData.map(a => {
+    const live = _agentLiveStatus[a.id];
+    const dotCls = live ? 'busy' : a.status === 'idle' ? 'idle' : 'online';
+    const label = live ? 'running' : a.status === 'idle' ? 'idle' : 'standby';
+    return `<div class="asm-row">
+      <div class="asm-dot ${dotCls}"></div>
+      <div class="asm-name">${a.name.replace(' Agent','')}</div>
+      <div class="asm-role">${label}</div>
+    </div>`;
+  }).join('');
+}
+
+function setAgentLive(agentId, running) {
+  if (running) _agentLiveStatus[agentId] = 'running';
+  else delete _agentLiveStatus[agentId];
+  renderSidebarStatus();
+}
+
 // ── INIT ──
 renderDepts();
 renderRoles();
 renderBoard();
 renderAgentList();
+renderSidebarStatus();
 window._currentAgent = 'ceo';
 window._currentView = 'overview';
 
