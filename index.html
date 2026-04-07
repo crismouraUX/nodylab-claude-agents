@@ -207,6 +207,132 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
 .vtab:hover { color: var(--text); }
 .vtab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
 
+/* ── VIEW MODE TOGGLE ── */
+.view-mode-toggle {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.vmt-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text2);
+  transition: all 0.15s;
+  letter-spacing: 0.02em;
+}
+.vmt-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+.vmt-btn.active { background: var(--bg4); color: var(--accent); border-color: rgba(79,142,247,0.3); }
+
+/* ── HIERARCHY TREE ── */
+#dept-hierarchy { display: none; }
+.hier-root { padding: 4px 0; }
+.hier-founders {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 2px;
+}
+.hier-level { display: flex; gap: 16px; flex-wrap: wrap; padding-left: 32px; margin-top: 2px; position: relative; }
+.hier-level::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 16px;
+  width: 1px;
+  background: var(--border2);
+}
+.hier-branch { display: flex; flex-direction: column; align-items: flex-start; position: relative; }
+.hier-branch::before {
+  content: '';
+  position: absolute;
+  left: -24px;
+  top: 16px;
+  width: 24px;
+  height: 1px;
+  background: var(--border2);
+}
+.hier-node {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  min-width: 140px;
+  margin-bottom: 8px;
+}
+.hier-node:hover { border-color: var(--border2); background: var(--bg3); }
+.hier-node.clevel { border-color: rgba(79,142,247,0.25); }
+.hier-node.clevel:hover { border-color: rgba(79,142,247,0.5); }
+.hier-av {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.hier-info { flex: 1; min-width: 0; }
+.hier-name { font-size: 11px; font-weight: 500; color: var(--text); white-space: nowrap; }
+.hier-role { font-size: 10px; color: var(--text3); font-family: var(--font-mono); margin-top: 1px; white-space: nowrap; }
+.hier-status { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.hier-status.online { background: var(--green); box-shadow: 0 0 5px var(--green); }
+.hier-status.busy { background: var(--amber); box-shadow: 0 0 5px var(--amber); }
+.hier-status.idle { background: var(--text3); }
+.hier-children { padding-left: 20px; position: relative; }
+.hier-children::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 8px;
+  width: 1px;
+  background: var(--border);
+}
+.hier-child { position: relative; margin-bottom: 6px; }
+.hier-child::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 14px;
+  width: 20px;
+  height: 1px;
+  background: var(--border);
+}
+.hier-crosscut-section { margin-top: 28px; }
+.hier-crosscut-label {
+  font-size: 10px;
+  color: var(--text3);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+  padding-left: 4px;
+}
+.hier-crosscut-row { display: flex; gap: 12px; flex-wrap: wrap; }
+
 /* ── CONTENT AREA ── */
 .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 24px; }
 .content::-webkit-scrollbar { width: 4px; }
@@ -849,7 +975,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
   <span style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">Agent Command Center</span>
   <div class="header-div"></div>
   <div class="header-pills">
-    <span class="hpill live">15 agents online</span>
+    <span class="hpill live">16 agents online</span>
     <span class="hpill">v1.0 · launch phase</span>
     <span class="hpill" id="clock"></span>
   </div>
@@ -883,7 +1009,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
       </div>
       <div class="nav-item" onclick="showView('roles',this)">
         <span class="nav-icon">◈</span> Roles
-        <span class="nav-badge">15</span>
+        <span class="nav-badge">16</span>
       </div>
       <div class="nav-item" onclick="showView('board',this)">
         <span class="nav-icon">▦</span> Task Board
@@ -931,6 +1057,11 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
         <div class="asm-dot idle"></div>
         <div class="asm-name">Finance</div>
         <div class="asm-role">idle</div>
+      </div>
+      <div class="asm-row">
+        <div class="asm-dot online"></div>
+        <div class="asm-name">CFO</div>
+        <div class="asm-role">active</div>
       </div>
     </div>
   </div>
@@ -1098,31 +1229,47 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
         <div class="section-head">
           <div>
             <div class="section-title">Agent Departments</div>
-            <div class="section-sub">15 agents · 5 departments · click any agent to open chat</div>
+            <div class="section-sub">16 agents · 6 departments · click any agent to open chat</div>
           </div>
-          <button class="btn btn-primary">+ Deploy agent</button>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div class="view-mode-toggle">
+              <button class="vmt-btn active" id="vmt-grid" onclick="setDeptView('grid')">⬡ Grid</button>
+              <button class="vmt-btn" id="vmt-hierarchy" onclick="setDeptView('hierarchy')">⊞ Hierarchy</button>
+            </div>
+            <button class="btn btn-primary">+ Deploy agent</button>
+          </div>
         </div>
 
-        <div class="dept-section" data-dept="clevel" style="margin-bottom:20px;">
-          <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">⬡ C-Level Command</div>
-          <div class="dept-grid" id="clevel-agents"></div>
+        <!-- GRID VIEW -->
+        <div id="dept-grid-view">
+          <div class="dept-section" data-dept="clevel" style="margin-bottom:20px;">
+            <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">⬡ C-Level Command</div>
+            <div class="dept-grid" id="clevel-agents"></div>
+          </div>
+          <div class="dept-section" data-dept="finance" style="margin-bottom:20px;">
+            <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">◈ Finance</div>
+            <div class="dept-grid" id="finance-agents"></div>
+          </div>
+          <div class="dept-section" data-dept="marketing" style="margin-bottom:20px;">
+            <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">◎ Marketing & Content</div>
+            <div class="dept-grid" id="marketing-agents"></div>
+          </div>
+          <div class="dept-section" data-dept="tech" style="margin-bottom:20px;">
+            <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">▦ Technology</div>
+            <div class="dept-grid" id="tech-agents"></div>
+          </div>
+          <div class="dept-section" data-dept="sales" style="margin-bottom:20px;">
+            <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">⬡ Sales & Growth</div>
+            <div class="dept-grid" id="sales-agents"></div>
+          </div>
+          <div class="dept-section" data-dept="crosscut">
+            <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">⚑ Cross-cutting</div>
+            <div class="dept-grid" id="crosscut-agents"></div>
+          </div>
         </div>
-        <div class="dept-section" data-dept="marketing" style="margin-bottom:20px;">
-          <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">◎ Marketing & Content</div>
-          <div class="dept-grid" id="marketing-agents"></div>
-        </div>
-        <div class="dept-section" data-dept="tech" style="margin-bottom:20px;">
-          <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">▦ Technology</div>
-          <div class="dept-grid" id="tech-agents"></div>
-        </div>
-        <div class="dept-section" data-dept="sales" style="margin-bottom:20px;">
-          <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">◈ Sales & Growth</div>
-          <div class="dept-grid" id="sales-agents"></div>
-        </div>
-        <div class="dept-section" data-dept="crosscut">
-          <div style="font-size:11px;color:var(--text3);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">⚑ Cross-cutting</div>
-          <div class="dept-grid" id="crosscut-agents"></div>
-        </div>
+
+        <!-- HIERARCHY VIEW -->
+        <div id="dept-hierarchy"></div>
       </div>
 
       <!-- ══════════════════════════════════ ROLES ══════════════════════════════════ -->
@@ -1399,6 +1546,16 @@ const agentData = [
   { id:'coo', name:'COO Agent', role:'Chief Operating Officer', dept:'clevel', status:'online', statusLabel:'Active', color:'linear-gradient(135deg,#22c97a,#0f5c36)', initials:'CO', desc:'Owns operations, meeting pipeline, client onboarding, cross-agent task routing.', tags:['operations','pipeline','onboarding'], tasks:2, deliverables:['Ops digest','Pipeline report','Task metrics'], reportsTo:'CEO', prompt:'Pending', tier:'C-Level' },
   { id:'cmo', name:'CMO Agent', role:'Chief Marketing Officer', dept:'clevel', status:'busy', statusLabel:'Running: Framework 1', color:'linear-gradient(135deg,#f5a623,#854f0b)', initials:'CM', desc:'Brand, content strategy, campaigns, lead generation for international markets.', tags:['brand','campaigns','leads'], tasks:4, deliverables:['Brand guidelines','Content calendar','Campaign report'], reportsTo:'CEO', prompt:'Pending', tier:'C-Level' },
   { id:'cto', name:'CTO Agent', role:'Chief Technology Officer', dept:'clevel', status:'online', statusLabel:'Active', color:'linear-gradient(135deg,#2dd4bf,#0f6e56)', initials:'CT', desc:'Tech stack, website architecture, Automata integration, API development.', tags:['architecture','apis','automata'], tasks:2, deliverables:['Tech architecture','Website spec','API map'], reportsTo:'CEO', prompt:'Pending', tier:'C-Level' },
+  { id:'cfo', name:'CFO Agent', role:'Chief Financial Officer', dept:'finance', status:'online', statusLabel:'Active', color:'linear-gradient(135deg,#10b981,#064e3b)', initials:'CF', desc:'Startup launch finance specialist. Zero-waste hiring strategy, performance-driven ad spend, healthy ROAS, unit economics, burn rate control, and scalable financial architecture for launch phase.', tags:['roas','unit-economics','runway'], tasks:2, deliverables:['Financial model','Ad spend playbook','Hiring cost matrix'], reportsTo:'CEO', prompt:'✓ Complete', tier:'C-Level',
+    skills:[
+      { name:'Cost-Efficient Hiring', icon:'◎', desc:'Fractional & performance-based team builds — lowest CAC per role hired.' },
+      { name:'Ad Spend Optimization', icon:'◈', desc:'Platform-level budget allocation: Meta, Google, LinkedIn. Zero-waste spend.' },
+      { name:'ROAS Engineering', icon:'▦', desc:'Targets 3-5x ROAS on paid channels in launch phase. Weekly attribution tracking.' },
+      { name:'Financial Modeling', icon:'⬡', desc:'Runway forecasting, break-even analysis, and MRR projection models.' },
+      { name:'Unit Economics', icon:'◉', desc:'CAC, LTV, payback period, and contribution margin per channel.' },
+      { name:'Scalable Growth Finance', icon:'⊞', desc:'Phase-gated budgeting — unlock spend when KPIs are proven, not promised.' },
+    ]
+  },
   { id:'content', name:'Content Director', role:'Sr. Content Director', dept:'marketing', status:'online', statusLabel:'Active', color:'linear-gradient(135deg,#f472b6,#993556)', initials:'CD', desc:'Website copy, blog posts, email sequences, SEO strategy, thought leadership.', tags:['copy','seo','email'], tasks:1, deliverables:['Website copy','Blog posts','Email sequences'], reportsTo:'CMO', prompt:'Pending', tier:'Specialist' },
   { id:'social', name:'Social Analyst', role:'Social Media Analyst', dept:'marketing', status:'idle', statusLabel:'Idle', color:'linear-gradient(135deg,#a78bfa,#3b2a6b)', initials:'SA', desc:'LinkedIn, Instagram, TikTok — targeting USA, UK, EU, UAE, APAC.', tags:['linkedin','instagram','analytics'], tasks:0, deliverables:['Monthly calendar','Analytics report','Audience growth'], reportsTo:'CMO', prompt:'Pending', tier:'Specialist' },
   { id:'art', name:'Art Designer', role:'Art Designer', dept:'marketing', status:'busy', statusLabel:'Working on brand assets', color:'linear-gradient(135deg,#f0997b,#712b13)', initials:'AD', desc:'Social graphics, ad creatives, image library, presentations, brand collateral.', tags:['design','visuals','brand'], tasks:1, deliverables:['Asset library','Social templates','Pitch deck'], reportsTo:'CMO', prompt:'Pending', tier:'Specialist' },
@@ -1408,7 +1565,7 @@ const agentData = [
   { id:'ga4', name:'GA4 Analyst', role:'Sr. GA4 Analyst', dept:'tech', status:'idle', statusLabel:'Idle', color:'linear-gradient(135deg,#34d399,#065f46)', initials:'G4', desc:'Website analytics, GA4 setup, conversion funnels, traffic by geo.', tags:['ga4','analytics','conversion'], tasks:0, deliverables:['GA4 setup','Analytics report','Funnel suggestions'], reportsTo:'CTO', prompt:'Pending', tier:'Specialist' },
   { id:'sdr', name:'SDR Agent', role:'Sales Development Rep', dept:'sales', status:'busy', statusLabel:'ICP research in progress', color:'linear-gradient(135deg,#f05c5c,#5c1a1a)', initials:'SD', desc:'Top-of-funnel outreach: finding leads, personalized messages, booking discovery calls.', tags:['linkedin','cold-email','icp'], tasks:1, deliverables:['Qualified leads/week','Meeting confirmations','Lead source report'], reportsTo:'COO', prompt:'Pending', tier:'Specialist' },
   { id:'sales', name:'Sales Engineer', role:'Sales Engineer', dept:'sales', status:'idle', statusLabel:'Idle', color:'linear-gradient(135deg,#fb923c,#6b430a)', initials:'SE', desc:'Technical demos, solution scoping, pricing, proposal writing.', tags:['demos','proposals','pricing'], tasks:0, deliverables:['Demo playbook','Proposal template','Win/loss analysis'], reportsTo:'COO', prompt:'Pending', tier:'Specialist' },
-  { id:'finance', name:'Finance Analyst', role:'Finance Analyst', dept:'crosscut', status:'online', statusLabel:'Active', color:'linear-gradient(135deg,#86efac,#27500a)', initials:'FA', desc:'Tracks API costs, models revenue projections, flags budget overruns.', tags:['finance','costs','projections'], tasks:1, deliverables:['Monthly report','Cost-per-lead model','Budget dashboard'], reportsTo:'COO', prompt:'Pending', tier:'Specialist' },
+  { id:'finance', name:'Finance Analyst', role:'Finance Analyst', dept:'finance', status:'online', statusLabel:'Active', color:'linear-gradient(135deg,#86efac,#27500a)', initials:'FA', desc:'Tracks API costs, models revenue projections, flags budget overruns. Feeds data directly to CFO for decision-making.', tags:['finance','costs','projections'], tasks:1, deliverables:['Monthly report','Cost-per-lead model','Budget dashboard'], reportsTo:'CFO', prompt:'Pending', tier:'Specialist' },
   { id:'audit', name:'Token Analyst', role:'Claude Consumption Analyst', dept:'crosscut', status:'online', statusLabel:'Monitoring', color:'linear-gradient(135deg,#f09595,#501313)', initials:'TA', desc:'Audits all agents for token efficiency. Recommends prompt compression, model routing, memory strategies.', tags:['tokens','optimization','audit'], tasks:2, deliverables:['Token audit report','Prompt compression recs','Model routing matrix'], reportsTo:'All agents', prompt:'✓ Active', tier:'Cross-cutting' },
 ];
 
@@ -1433,7 +1590,7 @@ const taskData = {
 // ── TAB CONFIGS PER VIEW ──
 const viewTabConfigs = {
   overview:    null,
-  departments: [['All','all'],['C-Level','clevel'],['Marketing','marketing'],['Tech','tech'],['Sales','sales'],['Cross-cutting','crosscut']],
+  departments: [['All','all'],['C-Level','clevel'],['Finance','finance'],['Marketing','marketing'],['Tech','tech'],['Sales','sales'],['Cross-cutting','crosscut']],
   roles:       [['All','all'],['C-Level','clevel-t'],['Specialist','specialist'],['Cross-cutting','crosscut-t']],
   board:       [['All Tasks','all'],['High Priority','high'],['In Progress','in-progress'],['Done','done']],
   comms:       null,
@@ -1462,7 +1619,18 @@ function showView(name, el) {
 
   window._currentView = name;
   if (name === 'board') renderBoard();
-  if (name === 'departments') renderDepts();
+  if (name === 'departments') {
+    renderDepts();
+    // restore view mode state
+    const mode = window._deptView || 'grid';
+    document.getElementById('dept-grid-view').style.display = mode === 'grid' ? '' : 'none';
+    const hier = document.getElementById('dept-hierarchy');
+    if (mode === 'hierarchy') { hier.style.display = ''; renderHierarchy(); }
+    else hier.style.display = 'none';
+    document.getElementById('vmt-grid').classList.toggle('active', mode === 'grid');
+    document.getElementById('vmt-hierarchy').classList.toggle('active', mode === 'hierarchy');
+    if (mode === 'hierarchy') tabBar.style.display = 'none';
+  }
   if (name === 'roles') renderRoles();
   if (name === 'comms') renderAgentList();
   if (name === 'monitor') renderMonitor();
@@ -1505,6 +1673,84 @@ function switchTab(el, filter, view) {
   }
 }
 
+// ── DEPT VIEW MODE ──
+window._deptView = 'grid';
+function setDeptView(mode) {
+  window._deptView = mode;
+  document.getElementById('vmt-grid').classList.toggle('active', mode === 'grid');
+  document.getElementById('vmt-hierarchy').classList.toggle('active', mode === 'hierarchy');
+  document.getElementById('dept-grid-view').style.display = mode === 'grid' ? '' : 'none';
+  const hier = document.getElementById('dept-hierarchy');
+  if (mode === 'hierarchy') {
+    hier.style.display = '';
+    renderHierarchy();
+  } else {
+    hier.style.display = 'none';
+  }
+  // hide/show tabs bar based on mode
+  const tabBar = document.getElementById('view-tabs');
+  tabBar.style.display = mode === 'grid' ? 'flex' : 'none';
+}
+
+function renderHierarchy() {
+  const byId = {};
+  agentData.forEach(a => byId[a.id] = a);
+
+  // Build reports-to map (id → direct reports)
+  const reportsMap = {};
+  agentData.forEach(a => {
+    const r = a.reportsTo;
+    if (!r || r === 'Founders' || r === 'All agents') return;
+    const boss = agentData.find(x =>
+      x.name.toLowerCase().includes(r.toLowerCase()) ||
+      x.id.toLowerCase() === r.toLowerCase()
+    );
+    if (boss) {
+      if (!reportsMap[boss.id]) reportsMap[boss.id] = [];
+      reportsMap[boss.id].push(a);
+    }
+  });
+
+  // Render a single node (no children — used for root/clevel row)
+  function singleNode(a, isCLevel) {
+    const sc = a.status === 'online' ? 'online' : a.status === 'busy' ? 'busy' : 'idle';
+    return `<div class="hier-node${isCLevel?' clevel':''}" onclick="openAgentChat('${a.id}')">
+      <div class="hier-av" style="background:${a.color};">${a.initials}</div>
+      <div class="hier-info">
+        <div class="hier-name">${a.name}</div>
+        <div class="hier-role">${a.role}</div>
+      </div>
+      <div class="hier-status ${sc}"></div>
+    </div>`;
+  }
+
+  // Render a node with all its descendants
+  function branchHTML(a, isCLevel) {
+    const children = reportsMap[a.id] || [];
+    const childrenHTML = children.length ? `<div class="hier-children">
+      ${children.map(c => `<div class="hier-child">${branchHTML(c, false)}</div>`).join('')}
+    </div>` : '';
+    return singleNode(a, isCLevel) + childrenHTML;
+  }
+
+  const ceo = byId['ceo'];
+  const clevelDirects = reportsMap['ceo'] || [];
+  const crosscut = agentData.filter(a => a.dept === 'crosscut');
+
+  const html = `<div class="hier-root">
+    <div style="margin-bottom:2px;">${singleNode(ceo, true)}</div>
+    <div class="hier-level">
+      ${clevelDirects.map(a => `<div class="hier-branch">${branchHTML(a, true)}</div>`).join('')}
+    </div>
+    ${crosscut.length ? `<div class="hier-crosscut-section">
+      <div class="hier-crosscut-label">⚑ Cross-cutting · reports to all agents</div>
+      <div class="hier-crosscut-row">${crosscut.map(a => singleNode(a, false)).join('')}</div>
+    </div>` : ''}
+  </div>`;
+
+  document.getElementById('dept-hierarchy').innerHTML = html;
+}
+
 // ── CLOCK ──
 function updateClock() {
   const now = new Date();
@@ -1544,9 +1790,10 @@ function renderAgentCard(a) {
 }
 
 function renderDepts() {
-  const byDept = { clevel:[], marketing:[], tech:[], sales:[], crosscut:[] };
-  agentData.forEach(a => byDept[a.dept].push(a));
+  const byDept = { clevel:[], finance:[], marketing:[], tech:[], sales:[], crosscut:[] };
+  agentData.forEach(a => { if (byDept[a.dept]) byDept[a.dept].push(a); });
   document.getElementById('clevel-agents').innerHTML = byDept.clevel.map(renderAgentCard).join('');
+  document.getElementById('finance-agents').innerHTML = byDept.finance.map(renderAgentCard).join('');
   document.getElementById('marketing-agents').innerHTML = byDept.marketing.map(renderAgentCard).join('');
   document.getElementById('tech-agents').innerHTML = byDept.tech.map(renderAgentCard).join('');
   document.getElementById('sales-agents').innerHTML = byDept.sales.map(renderAgentCard).join('');
@@ -1811,7 +2058,8 @@ const agentSystemPrompts = {
   ga4: `You are the GA4 Analyst Agent for NodyLab. You handle GA4 setup, conversion funnels, and geo traffic analysis. Currently idle. Report to CTO.`,
   sdr: `You are the SDR Agent for NodyLab. You identify qualified leads, craft personalized outreach, and book discovery calls. Currently doing ICP research: UAE (47 leads found) and Singapore in progress. Use LinkedIn Sales Navigator and Apollo.io. Report to COO. Be metrics-driven.`,
   sales: `You are the Sales Engineer Agent for NodyLab. You handle technical demos, solution scoping, pricing, and proposals. Currently idle, awaiting leads from SDR. Report to COO.`,
-  finance: `You are the Finance Analyst Agent for NodyLab. You track API costs ($47/day), Hostinger ($17/mo), Apollo ($89/mo), model projections, and flag overruns. Runway: 8 months. Break-even: 1 client at $900/mo. Report to COO. Be precise with numbers.`,
+  cfo: `You are the CFO Agent for NodyLab — a startup launch finance specialist. Your mandate: maximize output per dollar spent across hiring, ads, and operations. Skills: zero-waste hiring (fractional + performance-based roles only), ad spend optimization (Meta, Google, LinkedIn — target 3-5x ROAS), unit economics (CAC, LTV, payback period), burn rate control, runway extension, and phase-gated growth budgeting. Current runway: 8 months. Break-even: 1 client at $900/mo. Unlock paid spend only when organic signals validate. Be ruthlessly precise with numbers. No vanity metrics.`,
+  finance: `You are the Finance Analyst Agent for NodyLab. You track API costs ($47/day), Hostinger ($17/mo), Apollo ($89/mo), model projections, and flag overruns. Runway: 8 months. Break-even: 1 client at $900/mo. Report to CFO. Be precise with numbers.`,
   audit: `You are the Token Analyst Agent for NodyLab. You audit all Claude agents for token efficiency. Current findings: Content Director at 847 tokens (target 400), CMO at 19.2k/30k daily budget. Total system: 42k/200k tokens today. Recommend prompt compression, model routing (Haiku for simple tasks), memory strategies. Be specific with token counts and cost estimates.`,
 };
 
