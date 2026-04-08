@@ -1575,6 +1575,38 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
             </div>
           </div>
 
+          <!-- MCP + GUIDELINES CARD -->
+          <div class="admin-card" style="grid-column:1/-1;">
+            <div class="admin-card-title">⊞ Global Guidelines &amp; Skills</div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:14px;">These apply to all agents as shared context. Use for global rules, brand voice, MCP tool configs, or .md skill files.</div>
+            <div style="display:flex;gap:8px;margin-bottom:10px;">
+              <button class="vmt-btn active" id="gl-tab-guidelines" onclick="switchGlTab('guidelines')" style="font-size:11px;">📋 Guidelines</button>
+              <button class="vmt-btn" id="gl-tab-skills" onclick="switchGlTab('skills')" style="font-size:11px;">⚡ Skills</button>
+              <button class="vmt-btn" id="gl-tab-mcp" onclick="switchGlTab('mcp')" style="font-size:11px;">🔌 MCP Config</button>
+            </div>
+            <div id="gl-panel-guidelines">
+              <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-bottom:6px;">CLAUDE.md / global-guidelines.md — injected into all agent prompts</div>
+              <textarea id="gl-guidelines-ta" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px;font-size:12px;color:var(--text);font-family:var(--font-mono);line-height:1.6;resize:vertical;min-height:140px;outline:none;" placeholder="# Global Guidelines&#10;&#10;- Always respond in the language the user writes in&#10;- Be concise and direct&#10;- Never hallucinate data..."></textarea>
+            </div>
+            <div id="gl-panel-skills" style="display:none;">
+              <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-bottom:6px;">Skill files (.md) — define reusable agent capabilities</div>
+              <div id="gl-skills-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;"></div>
+              <div style="display:flex;gap:8px;">
+                <input id="gl-skill-name" class="rm-input" placeholder="Skill name (e.g. cold-email-writer)" style="width:180px;">
+                <textarea id="gl-skill-content" class="rm-input" placeholder="Skill content / instructions..." style="flex:1;height:36px;resize:none;font-family:var(--font-mono);font-size:11px;"></textarea>
+                <button class="btn btn-ghost" style="font-size:11px;padding:6px 12px;white-space:nowrap;" onclick="addGlobalSkill()">+ Add</button>
+              </div>
+            </div>
+            <div id="gl-panel-mcp" style="display:none;">
+              <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-bottom:6px;">MCP server config — tool connections for all agents</div>
+              <textarea id="gl-mcp-ta" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px;font-size:12px;color:var(--text);font-family:var(--font-mono);line-height:1.6;resize:vertical;min-height:140px;outline:none;" placeholder='{\n  "mcpServers": {\n    "notion": { "command": "npx", "args": ["@modelcontextprotocol/server-notion"] },\n    "slack": { "command": "npx", "args": ["@modelcontextprotocol/server-slack"] }\n  }\n}'></textarea>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px;">
+              <span id="gl-save-msg" style="font-size:11px;font-family:var(--font-mono);color:var(--green);opacity:0;transition:opacity 0.3s;align-self:center;">✓ Saved</span>
+              <button class="btn btn-primary" style="font-size:11px;" onclick="saveGlobalConfig()">Save</button>
+            </div>
+          </div>
+
           <div class="admin-card" style="grid-column:1/-1;">
             <div class="admin-card-title">⚑ Token Analyst — Daily Budget</div>
             <div class="token-meter">
@@ -2242,6 +2274,61 @@ function escapeHtml(t) {
   return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// ── GLOBAL CONFIG (guidelines, skills, mcp) ──
+const _globalConfig = (() => { try { return JSON.parse(localStorage.getItem('nodylab_global') || '{}'); } catch(e) { return {}; } })();
+
+function _initGlobalConfig() {
+  const ta = document.getElementById('gl-guidelines-ta');
+  const mta = document.getElementById('gl-mcp-ta');
+  if (ta && _globalConfig.guidelines) ta.value = _globalConfig.guidelines;
+  if (mta && _globalConfig.mcp) mta.value = _globalConfig.mcp;
+  _renderGlobalSkills();
+}
+
+function switchGlTab(tab) {
+  ['guidelines','skills','mcp'].forEach(t => {
+    document.getElementById('gl-panel-' + t).style.display = t === tab ? '' : 'none';
+    document.getElementById('gl-tab-' + t).classList.toggle('active', t === tab);
+  });
+}
+
+function _renderGlobalSkills() {
+  const list = document.getElementById('gl-skills-list');
+  if (!list) return;
+  const skills = _globalConfig.skills || [];
+  list.innerHTML = skills.length
+    ? skills.map((s, i) => `<div style="display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;">
+        <span style="font-size:11px;font-family:var(--font-mono);color:var(--accent);min-width:140px;">${escapeHtml(s.name)}</span>
+        <span style="font-size:11px;color:var(--text3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(s.content.slice(0,80))}${s.content.length>80?'...':''}</span>
+        <span style="cursor:pointer;color:var(--text3);font-size:13px;" onclick="removeGlobalSkill(${i})" title="Remove">×</span>
+      </div>`).join('')
+    : `<span style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">No skill files added yet</span>`;
+}
+
+function addGlobalSkill() {
+  const name = document.getElementById('gl-skill-name').value.trim();
+  const content = document.getElementById('gl-skill-content').value.trim();
+  if (!name || !content) return;
+  if (!_globalConfig.skills) _globalConfig.skills = [];
+  _globalConfig.skills.push({ name, content });
+  document.getElementById('gl-skill-name').value = '';
+  document.getElementById('gl-skill-content').value = '';
+  _renderGlobalSkills();
+}
+
+function removeGlobalSkill(idx) {
+  if (_globalConfig.skills) _globalConfig.skills.splice(idx, 1);
+  _renderGlobalSkills();
+}
+
+function saveGlobalConfig() {
+  _globalConfig.guidelines = (document.getElementById('gl-guidelines-ta') || {}).value || '';
+  _globalConfig.mcp = (document.getElementById('gl-mcp-ta') || {}).value || '';
+  localStorage.setItem('nodylab_global', JSON.stringify(_globalConfig));
+  const msg = document.getElementById('gl-save-msg');
+  if (msg) { msg.style.opacity = '1'; setTimeout(() => msg.style.opacity = '0', 2000); }
+}
+
 function saveApiKey(val) {
   localStorage.setItem('nodylab_api_key', val.trim());
   const s = document.getElementById('api-key-status');
@@ -2323,11 +2410,13 @@ const agentSystemPrompts = {
 };
 
 function _buildPrompt(agentId) {
-  // Use custom saved prompt if exists, otherwise default
   const specific = agentPromptsStore[agentId] || agentSystemPrompts[agentId] || agentSystemPrompts.ceo;
   const skills = agentSkillsStore[agentId];
   const skillsLine = skills && skills.length ? '\n\nInstalled skills: ' + skills.join(', ') + '.' : '';
-  return ORG_CONTEXT + '\n\n## Your Specific Role\n' + specific + skillsLine;
+  // Global skills injected as available tools
+  const globalSkills = (_globalConfig.skills || []).map(s => `\n### Skill: ${s.name}\n${s.content}`).join('');
+  const globalGuidelines = _globalConfig.guidelines ? '\n\n## Global Guidelines\n' + _globalConfig.guidelines : '';
+  return ORG_CONTEXT + globalGuidelines + '\n\n## Your Specific Role\n' + specific + skillsLine + (globalSkills ? '\n\n## Available Skills\n' + globalSkills : '');
 }
 
 // ── AGENT SKILLS + PROMPTS STORE ──
@@ -2649,6 +2738,7 @@ renderRoles();
 renderBoard();
 renderAgentList();
 renderSidebarStatus();
+_initGlobalConfig();
 window._currentAgent = 'ceo';
 window._currentView = 'overview';
 
