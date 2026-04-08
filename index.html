@@ -898,6 +898,9 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
   padding: 18px;
 }
 .admin-card-title { font-size: 14px; font-weight: 600; color: var(--text); font-family: var(--font-head); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.gh-file-tag { font-size: 10px; font-family: var(--font-mono); padding: 3px 8px; border-radius: 4px; background: var(--bg4); border: 1px solid var(--border2); color: var(--text3); transition: all 0.2s; }
+.gh-file-tag.synced { border-color: rgba(34,201,122,0.35); color: var(--green); background: rgba(34,201,122,0.06); }
+.gh-file-tag.error { border-color: rgba(240,92,92,0.35); color: var(--red); background: rgba(240,92,92,0.06); }
 .admin-row {
   display: flex;
   align-items: center;
@@ -1631,6 +1634,48 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
               <div class="tm-bar"><div class="tm-fill" style="width:17%;background:var(--green);"></div></div>
             </div>
           </div>
+
+          <div class="admin-card" style="grid-column:1/-1;">
+            <div class="admin-card-title">🗄 GitHub Storage — JSON/MD Database</div>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:14px;line-height:1.6;">
+              Persist agent data (chat history, prompts, skills, global config) as JSON files in your GitHub repo. Syncs across devices and survives browser clears.
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+              <div>
+                <label style="font-size:10px;color:var(--text3);font-family:var(--font-mono);display:block;margin-bottom:4px;">GitHub Owner / Username</label>
+                <input id="gh-owner" type="text" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:6px 10px;color:var(--text);font-size:12px;font-family:var(--font-mono);outline:none;transition:border-color 0.15s;" placeholder="e.g. crismouraUX" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'">
+              </div>
+              <div>
+                <label style="font-size:10px;color:var(--text3);font-family:var(--font-mono);display:block;margin-bottom:4px;">Repository Name</label>
+                <input id="gh-repo" type="text" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:6px 10px;color:var(--text);font-size:12px;font-family:var(--font-mono);outline:none;transition:border-color 0.15s;" placeholder="e.g. nodylab-claude-agents" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'">
+              </div>
+              <div>
+                <label style="font-size:10px;color:var(--text3);font-family:var(--font-mono);display:block;margin-bottom:4px;">Branch</label>
+                <input id="gh-branch" type="text" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:6px 10px;color:var(--text);font-size:12px;font-family:var(--font-mono);outline:none;transition:border-color 0.15s;" placeholder="main" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'">
+              </div>
+              <div>
+                <label style="font-size:10px;color:var(--text3);font-family:var(--font-mono);display:block;margin-bottom:4px;">Personal Access Token <span style="color:var(--text3);font-size:9px;">(repo scope, stored locally)</span></label>
+                <input id="gh-token" type="password" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:6px 10px;color:var(--text);font-size:12px;font-family:var(--font-mono);outline:none;transition:border-color 0.15s;" placeholder="ghp_..." onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'">
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <button class="btn btn-primary" style="font-size:11px;" onclick="saveGhConfig()">Save & Connect</button>
+              <button class="btn" style="font-size:11px;background:var(--bg3);border:1px solid var(--border2);" onclick="testGhConnection()">Test Connection</button>
+              <button class="btn" style="font-size:11px;background:var(--bg3);border:1px solid var(--border2);" onclick="ghSyncAll('push')">⬆ Push All</button>
+              <button class="btn" style="font-size:11px;background:var(--bg3);border:1px solid var(--border2);" onclick="ghSyncAll('pull')">⬇ Pull from GitHub</button>
+              <span id="gh-status" style="font-size:11px;font-family:var(--font-mono);color:var(--text3);margin-left:auto;"></span>
+            </div>
+            <div style="margin-top:14px;padding:10px 12px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);">
+              <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-bottom:6px;">Data files synced to repo:</div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <span id="gh-file-chat" class="gh-file-tag">data/chat_history.json</span>
+                <span id="gh-file-prompts" class="gh-file-tag">data/agent_prompts.json</span>
+                <span id="gh-file-skills" class="gh-file-tag">data/agent_skills.json</span>
+                <span id="gh-file-global" class="gh-file-tag">data/global_config.json</span>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -2332,6 +2377,7 @@ function saveGlobalConfig() {
   _globalConfig.guidelines = (document.getElementById('gl-guidelines-ta') || {}).value || '';
   _globalConfig.mcp = (document.getElementById('gl-mcp-ta') || {}).value || '';
   localStorage.setItem('nodylab_global', JSON.stringify(_globalConfig));
+  _ghSyncFile('global_config', _globalConfig);
   const msg = document.getElementById('gl-save-msg');
   if (msg) { msg.style.opacity = '1'; setTimeout(() => msg.style.opacity = '0', 2000); }
 }
@@ -2540,6 +2586,10 @@ function saveRoleEdit() {
   // Save skills
   localStorage.setItem('nodylab_skills', JSON.stringify(agentSkillsStore));
 
+  // Sync to GitHub
+  _ghSyncFile('agent_prompts', agentPromptsStore);
+  _ghSyncFile('agent_skills', agentSkillsStore);
+
   // Update prompt badge in roles table
   renderRoles();
 
@@ -2555,6 +2605,199 @@ const chatHistory = (() => {
 })();
 function _saveChat() {
   try { localStorage.setItem('nodylab_chat', JSON.stringify(chatHistory)); } catch(e) {}
+  _ghSyncFile('chat_history', chatHistory);
+}
+
+// ══════════════════════════════════
+// GITHUB JSON DATABASE SYNC
+// ══════════════════════════════════
+
+const _ghConfig = (() => {
+  try { return JSON.parse(localStorage.getItem('nodylab_gh') || '{}'); } catch(e) { return {}; }
+})();
+
+const _ghShaCache = {}; // path → sha (for updates)
+
+function _ghHeaders() {
+  return {
+    'Authorization': `token ${_ghConfig.token}`,
+    'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+    'Content-Type': 'application/json'
+  };
+}
+
+function _ghApiUrl(path) {
+  const { owner, repo, branch } = _ghConfig;
+  return `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch || 'main'}`;
+}
+
+async function _ghRead(filePath) {
+  const res = await fetch(_ghApiUrl(filePath), { headers: _ghHeaders() });
+  if (res.status === 404) return { exists: false, content: null, sha: null };
+  if (!res.ok) throw new Error(`GitHub read failed: ${res.status} ${await res.text()}`);
+  const json = await res.json();
+  _ghShaCache[filePath] = json.sha;
+  const decoded = JSON.parse(atob(json.content.replace(/\n/g, '')));
+  return { exists: true, content: decoded, sha: json.sha };
+}
+
+async function _ghWrite(filePath, data, commitMsg) {
+  const { owner, repo, branch } = _ghConfig;
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+  const body = {
+    message: commitMsg || `[NodyLab] Update ${filePath}`,
+    content,
+    branch: branch || 'main'
+  };
+  if (_ghShaCache[filePath]) body.sha = _ghShaCache[filePath];
+  else {
+    // Try to get sha first to avoid "already exists" error
+    try {
+      const check = await fetch(url + `?ref=${branch || 'main'}`, { headers: _ghHeaders() });
+      if (check.ok) {
+        const j = await check.json();
+        _ghShaCache[filePath] = j.sha;
+        body.sha = j.sha;
+      }
+    } catch(e) {}
+  }
+  const res = await fetch(url, { method: 'PUT', headers: _ghHeaders(), body: JSON.stringify(body) });
+  if (!res.ok) throw new Error(`GitHub write failed: ${res.status} ${await res.text()}`);
+  const result = await res.json();
+  if (result.content) _ghShaCache[filePath] = result.content.sha;
+  return result;
+}
+
+function _ghReady() {
+  return !!((_ghConfig.owner && _ghConfig.repo && _ghConfig.token));
+}
+
+function _ghSetStatus(msg, color) {
+  const el = document.getElementById('gh-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = color || 'var(--text3)';
+}
+
+function _ghSetFileTag(key, state) {
+  const el = document.getElementById(`gh-file-${key}`);
+  if (!el) return;
+  el.className = 'gh-file-tag' + (state ? ' ' + state : '');
+}
+
+const _ghFileMap = {
+  chat_history: { store: () => chatHistory, key: 'chat', lsKey: null },
+  agent_prompts: { store: () => agentPromptsStore, key: 'prompts', lsKey: 'nodylab_prompts' },
+  agent_skills: { store: () => agentSkillsStore, key: 'skills', lsKey: 'nodylab_skills' },
+  global_config: { store: () => _globalConfig, key: 'global', lsKey: 'nodylab_global' }
+};
+
+async function _ghSyncFile(name, data) {
+  if (!_ghReady()) return;
+  const path = `data/${name}.json`;
+  const tagKey = Object.values(_ghFileMap).find(f => path.includes(name))?.key;
+  try {
+    await _ghWrite(path, data, `[NodyLab] Sync ${name}`);
+    if (tagKey) _ghSetFileTag(tagKey, 'synced');
+  } catch(e) {
+    if (tagKey) _ghSetFileTag(tagKey, 'error');
+    console.warn('GitHub sync failed:', e.message);
+  }
+}
+
+async function ghSyncAll(direction) {
+  if (!_ghReady()) {
+    _ghSetStatus('⚠ Not configured', 'var(--amber)');
+    return;
+  }
+  _ghSetStatus('Syncing…', 'var(--accent)');
+
+  if (direction === 'push') {
+    try {
+      await Promise.all([
+        _ghWrite('data/chat_history.json', chatHistory, '[NodyLab] Push all — chat'),
+        _ghWrite('data/agent_prompts.json', agentPromptsStore, '[NodyLab] Push all — prompts'),
+        _ghWrite('data/agent_skills.json', agentSkillsStore, '[NodyLab] Push all — skills'),
+        _ghWrite('data/global_config.json', _globalConfig, '[NodyLab] Push all — global')
+      ]);
+      ['chat','prompts','skills','global'].forEach(k => _ghSetFileTag(k, 'synced'));
+      _ghSetStatus('✓ Pushed to GitHub', 'var(--green)');
+    } catch(e) {
+      _ghSetStatus('⚠ Push error: ' + e.message, 'var(--red)');
+    }
+  } else {
+    // pull
+    try {
+      const [chatRes, promptsRes, skillsRes, globalRes] = await Promise.all([
+        _ghRead('data/chat_history.json'),
+        _ghRead('data/agent_prompts.json'),
+        _ghRead('data/agent_skills.json'),
+        _ghRead('data/global_config.json')
+      ]);
+      if (chatRes.exists) {
+        Object.assign(chatHistory, chatRes.content);
+        localStorage.setItem('nodylab_chat', JSON.stringify(chatHistory));
+        _ghSetFileTag('chat', 'synced');
+      }
+      if (promptsRes.exists) {
+        Object.assign(agentPromptsStore, promptsRes.content);
+        localStorage.setItem('nodylab_prompts', JSON.stringify(agentPromptsStore));
+        _ghSetFileTag('prompts', 'synced');
+      }
+      if (skillsRes.exists) {
+        Object.assign(agentSkillsStore, skillsRes.content);
+        localStorage.setItem('nodylab_skills', JSON.stringify(agentSkillsStore));
+        _ghSetFileTag('skills', 'synced');
+      }
+      if (globalRes.exists) {
+        Object.assign(_globalConfig, globalRes.content);
+        localStorage.setItem('nodylab_global', JSON.stringify(_globalConfig));
+        _initGlobalConfig();
+        _ghSetFileTag('global', 'synced');
+      }
+      _ghSetStatus('✓ Pulled from GitHub', 'var(--green)');
+    } catch(e) {
+      _ghSetStatus('⚠ Pull error: ' + e.message, 'var(--red)');
+    }
+  }
+  setTimeout(() => _ghSetStatus('', ''), 4000);
+}
+
+function saveGhConfig() {
+  _ghConfig.owner  = (document.getElementById('gh-owner')  || {}).value?.trim() || '';
+  _ghConfig.repo   = (document.getElementById('gh-repo')   || {}).value?.trim() || '';
+  _ghConfig.branch = (document.getElementById('gh-branch') || {}).value?.trim() || 'main';
+  _ghConfig.token  = (document.getElementById('gh-token')  || {}).value?.trim() || '';
+  localStorage.setItem('nodylab_gh', JSON.stringify(_ghConfig));
+  testGhConnection();
+}
+
+async function testGhConnection() {
+  if (!_ghReady()) {
+    _ghSetStatus('⚠ Fill in all fields first', 'var(--amber)');
+    return;
+  }
+  _ghSetStatus('Testing…', 'var(--accent)');
+  try {
+    const { owner, repo, branch } = _ghConfig;
+    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, { headers: _ghHeaders() });
+    if (!res.ok) throw new Error(`${res.status} — check owner/repo/token`);
+    const j = await res.json();
+    _ghSetStatus(`✓ Connected · ${j.full_name} (${branch || 'main'})`, 'var(--green)');
+    setTimeout(() => _ghSetStatus('', ''), 5000);
+  } catch(e) {
+    _ghSetStatus('✗ ' + e.message, 'var(--red)');
+  }
+}
+
+function _initGhFields() {
+  const set = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+  set('gh-owner',  _ghConfig.owner);
+  set('gh-repo',   _ghConfig.repo);
+  set('gh-branch', _ghConfig.branch || 'main');
+  set('gh-token',  _ghConfig.token);
 }
 
 // ── TOGGLES ──
@@ -2762,6 +3005,15 @@ document.getElementById('view-tabs').style.display = 'none';
     if (s) { s.textContent = '✓ saved'; s.style.color = 'var(--green)'; }
   }
 })();
+
+// Init GitHub storage fields & auto-pull on load
+setTimeout(() => {
+  _initGhFields();
+  if (_ghReady()) {
+    _ghSetStatus('Auto-syncing…', 'var(--accent)');
+    ghSyncAll('pull');
+  }
+}, 500);
 
 // ══════════════════════════════════
 // LIVE MONITOR DATA + RENDER
