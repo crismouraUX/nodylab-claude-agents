@@ -1296,22 +1296,22 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
         <div class="stat-grid">
           <div class="stat-card" style="color:var(--accent);">
             <div class="stat-label">Active agents</div>
-            <div class="stat-value" style="color:var(--accent);">15</div>
+            <div class="stat-value" id="stat-agents" style="color:var(--accent);">17</div>
             <div class="stat-delta">All systems <span>online</span></div>
           </div>
           <div class="stat-card" style="color:var(--amber);">
             <div class="stat-label">Tasks in progress</div>
-            <div class="stat-value" style="color:var(--amber);">7</div>
-            <div class="stat-delta"><span>+2</span> since yesterday</div>
+            <div class="stat-value" id="stat-tasks" style="color:var(--amber);">0</div>
+            <div class="stat-delta">Board tasks active</div>
           </div>
           <div class="stat-card" style="color:var(--green);">
-            <div class="stat-label">Meetings booked</div>
-            <div class="stat-value" style="color:var(--green);">0</div>
-            <div class="stat-delta">Goal: <span>5</span> this sprint</div>
+            <div class="stat-label">Inbox decisions</div>
+            <div class="stat-value" id="stat-inbox" style="color:var(--green);">0</div>
+            <div class="stat-delta">Pending your review</div>
           </div>
           <div class="stat-card" style="color:var(--red);">
             <div class="stat-label">Token spend today</div>
-            <div class="stat-value" style="color:var(--red);">42k</div>
+            <div class="stat-value" id="stat-tokens" style="color:var(--red);">0</div>
             <div class="stat-delta">Budget: <span>200k / day</span></div>
           </div>
         </div>
@@ -1323,42 +1323,8 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
               Live activity
               <span class="live-badge"><span class="live-dot"></span>live</span>
             </div>
-            <div class="activity-feed">
-              <div class="af-item">
-                <div class="af-icon" style="background:rgba(79,142,247,0.15);color:var(--accent);">⬡</div>
-                <div class="af-text"><strong>CEO</strong> delegated Framework 6 (Competitor Map) to <strong>CMO + CTO</strong> — Priority: High</div>
-                <div class="af-time">2m ago</div>
-              </div>
-              <div class="af-item">
-                <div class="af-icon" style="background:rgba(245,166,35,0.15);color:var(--amber);">◎</div>
-                <div class="af-text"><strong>CMO</strong> completed market breakdown analysis — 4 sections delivered</div>
-                <div class="af-time">18m ago</div>
-              </div>
-              <div class="af-item">
-                <div class="af-icon" style="background:rgba(240,92,92,0.15);color:var(--red);">⚑</div>
-                <div class="af-text"><strong>Token Analyst</strong> flagged verbose prompt in <strong>Content Director</strong> — 847 tokens, suggested trim to 400</div>
-                <div class="af-time">34m ago</div>
-              </div>
-              <div class="af-item">
-                <div class="af-icon" style="background:rgba(34,201,122,0.15);color:var(--green);">✓</div>
-                <div class="af-text"><strong>SDR</strong> generated ICP research for UAE and Singapore markets</div>
-                <div class="af-time">1h ago</div>
-              </div>
-              <div class="af-item">
-                <div class="af-icon" style="background:rgba(167,139,250,0.15);color:var(--purple);">◈</div>
-                <div class="af-text"><strong>CEO</strong> approved go-ahead on nodylab.com website build — delegated to <strong>CTO → Sr. Developer</strong></div>
-                <div class="af-time">2h ago</div>
-              </div>
-              <div class="af-item">
-                <div class="af-icon" style="background:rgba(45,212,191,0.15);color:var(--teal);">▦</div>
-                <div class="af-text"><strong>Finance Analyst</strong> filed monthly cost model — API spend $47/day, runway projection 8 months</div>
-                <div class="af-time">3h ago</div>
-              </div>
-              <div class="af-item">
-                <div class="af-icon" style="background:rgba(244,114,182,0.15);color:var(--pink);">◎</div>
-                <div class="af-text"><strong>Art Designer</strong> began brand asset library — 3 social templates in progress</div>
-                <div class="af-time">4h ago</div>
-              </div>
+            <div class="activity-feed" id="overview-activity-feed">
+              <div style="font-size:11px;color:var(--text3);padding:20px 0;text-align:center;opacity:0.6;">No activity yet — agents will log here as they work.</div>
             </div>
           </div>
 
@@ -1514,7 +1480,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
             <div class="col-head">
               <div class="col-dot" style="background:var(--text3);"></div>
               <div class="col-name">Backlog</div>
-              <div class="col-count">3</div>
+              <div class="col-count">0</div>
             </div>
             <div class="col-tasks" id="col-backlog"></div>
           </div>
@@ -1522,7 +1488,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
             <div class="col-head">
               <div class="col-dot" style="background:var(--accent);"></div>
               <div class="col-name">In Progress</div>
-              <div class="col-count">2</div>
+              <div class="col-count">0</div>
             </div>
             <div class="col-tasks" id="col-progress"></div>
           </div>
@@ -1530,7 +1496,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
             <div class="col-head">
               <div class="col-dot" style="background:var(--amber);"></div>
               <div class="col-name">In Review</div>
-              <div class="col-count">1</div>
+              <div class="col-count">0</div>
             </div>
             <div class="col-tasks" id="col-review"></div>
           </div>
@@ -1538,7 +1504,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
             <div class="col-head">
               <div class="col-dot" style="background:var(--green);"></div>
               <div class="col-name">Done</div>
-              <div class="col-count">1</div>
+              <div class="col-count">0</div>
             </div>
             <div class="col-tasks" id="col-done"></div>
           </div>
@@ -1593,6 +1559,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
             <div class="section-title">Admin</div>
             <div class="section-sub">System configuration · model settings · token budget</div>
           </div>
+          <button class="btn btn-ghost" onclick="resetSprint()" style="color:var(--red);border-color:rgba(240,92,92,0.3);" title="Clears all tasks, chat history, inbox and deliverables">↺ Reset sprint</button>
         </div>
         <div class="admin-grid">
           <div class="admin-card">
@@ -2004,41 +1971,10 @@ const agentData = [
 ];
 
 const taskData = {
-  backlog: [
-    { id:'t3', title:'Build offer creation framework', desc:'CMO + COO: Structure high-converting offer for top 3 problems identified', tag:'Framework 3', tagColor:'rgba(245,166,35,0.15)', tagTextColor:'#f5a623', owner:'CMO', ownerColor:'linear-gradient(135deg,#f5a623,#854f0b)', ownerInitials:'CM', priority:'h',
-      deliverables:[] },
-    { id:'t5', title:'Activate viral content engine', desc:'CMO → Content Director: Hook bank, content matrix, weekly posting template', tag:'Framework 5', tagColor:'rgba(34,201,122,0.15)', tagTextColor:'#22c97a', owner:'CMO', ownerColor:'linear-gradient(135deg,#f5a623,#854f0b)', ownerInitials:'CM', priority:'m',
-      deliverables:[] },
-    { id:'t7', title:'Design scale system roadmap', desc:'COO + CTO: Phased roadmap to $30k MRR — 4 phases, 12 months', tag:'Framework 7', tagColor:'rgba(240,92,92,0.15)', tagTextColor:'#f05c5c', owner:'COO', ownerColor:'linear-gradient(135deg,#22c97a,#0f5c36)', ownerInitials:'CO', priority:'m',
-      deliverables:[] },
-  ],
-  progress: [
-    { id:'t2', title:'Problem prioritization engine', desc:'CEO collecting inputs from COO, CMO, CTO — master priority table', tag:'Framework 2', tagColor:'rgba(79,142,247,0.15)', tagTextColor:'#4f8ef7', owner:'CEO', ownerColor:'linear-gradient(135deg,#4f8ef7,#a78bfa)', ownerInitials:'CE', priority:'h',
-      deliverables:[
-        { type:'notion', label:'Priority table draft', url:'#' },
-        { type:'doc', label:'CEO brief v1', url:'#' },
-      ]},
-    { id:'t6', title:'Competitor weakness map', desc:'CMO + CTO analyzing top 5 AI automation competitors — gaps and positioning', tag:'Framework 6', tagColor:'rgba(45,212,191,0.15)', tagTextColor:'#2dd4bf', owner:'CMO', ownerColor:'linear-gradient(135deg,#f5a623,#854f0b)', ownerInitials:'CM', priority:'h',
-      deliverables:[
-        { type:'doc', label:'Competitor analysis WIP', url:'#' },
-      ]},
-  ],
-  review: [
-    { id:'t4', title:'Distribution domination plan', desc:'CMO delivered 30-day plan — awaiting founder approval on positioning', tag:'Framework 4', tagColor:'rgba(167,139,250,0.15)', tagTextColor:'#a78bfa', owner:'CEO', ownerColor:'linear-gradient(135deg,#4f8ef7,#a78bfa)', ownerInitials:'CE', priority:'h',
-      requiresApproval: true,
-      deliverables:[
-        { type:'doc', label:'30-Day Distribution Plan v1', url:'#' },
-        { type:'notion', label:'Channel Strategy Board', url:'#' },
-        { type:'ppt', label:'Exec Summary Slides', url:'#' },
-      ]},
-  ],
-  done: [
-    { id:'t1', title:'Market breakdown system', desc:'CMO delivered TAM/SAM/SOM, demand trends, opportunities, and VC capital flow', tag:'Framework 1', tagColor:'rgba(34,201,122,0.15)', tagTextColor:'#22c97a', owner:'CMO', ownerColor:'linear-gradient(135deg,#f5a623,#854f0b)', ownerInitials:'CM', priority:'h',
-      deliverables:[
-        { type:'doc', label:'Market Breakdown Report', url:'#' },
-        { type:'notion', label:'TAM/SAM/SOM Model', url:'#' },
-      ]},
-  ],
+  backlog: [],
+  progress: [],
+  review: [],
+  done: [],
 };
 
 // ── TAB CONFIGS PER VIEW ──
@@ -2321,10 +2257,14 @@ function renderTaskCard(t) {
 }
 
 function renderBoard() {
-  document.getElementById('col-backlog').innerHTML = taskData.backlog.map(renderTaskCard).join('');
-  document.getElementById('col-progress').innerHTML = taskData.progress.map(renderTaskCard).join('');
-  document.getElementById('col-review').innerHTML = taskData.review.map(renderTaskCard).join('');
-  document.getElementById('col-done').innerHTML = taskData.done.map(renderTaskCard).join('');
+  const empty = `<div style="font-size:11px;color:var(--text3);padding:16px 0;text-align:center;opacity:0.6;">No tasks yet</div>`;
+  ['backlog','progress','review','done'].forEach(col => {
+    const el = document.getElementById('col-' + col);
+    if (el) el.innerHTML = taskData[col].length ? taskData[col].map(renderTaskCard).join('') : empty;
+    const cnt = el && el.closest('.board-col')?.querySelector('.col-count');
+    if (cnt) cnt.textContent = taskData[col].length;
+  });
+  _updateOverviewStats();
 }
 
 // ── RENDER AGENT LIST (chat panel) ──
@@ -2635,7 +2575,7 @@ function fallbackReply(thinkId, a, agentId, errMsg) {
 // ── SHARED ORG CONTEXT (injected into every agent prompt) ──
 const ORG_CONTEXT = `## NodyLab — Shared Org Context
 Company: NodyLab, AI automation services (B2B). Founded by Cristiano and Carlo. Pre-revenue, launch phase.
-Financials: Runway 8 months. Burn: $47/day API + $17/mo Hostinger + $89/mo Apollo. Break-even: 1 client at $900/mo.
+Financials: Runway 8 months. Burn: ~$47/day API + $17/mo Hostinger + $89/mo Apollo. Break-even: 1 client at $900/mo.
 Markets: USA, UK, EU, UAE, Singapore, AU.
 
 Reporting structure:
@@ -2647,24 +2587,11 @@ Reporting structure:
 - Finance Analyst → CFO
 - Token Analyst → all agents (cross-cutting audit role)
 
-7 Frameworks sprint:
-1. Market Breakdown — DONE (CMO: TAM/SAM/SOM, VC flow, demand trends)
-2. Problem Prioritization — IN PROGRESS (CEO collecting inputs from COO, CMO, CTO)
-3. Offer Creation — BACKLOG (CMO + COO)
-4. Distribution Domination Plan — UNDER FOUNDER REVIEW (CMO delivered, CEO reviewing; SDR UAE outreach is GATED on this approval because messaging must be locked before SDR burns hours on outreach)
-5. Viral Content Engine — BACKLOG
-6. Competitor Weakness Map — IN PROGRESS (CMO + CTO: Make.com, Zapier, n8n, Relevance AI, Gumloop)
-7. Scale System Roadmap — BACKLOG (COO + CTO, target $30k MRR in 12 months)
+Sprint: No active sprint. Cristiano (founder) will brief you directly via chat. When he gives you a goal, create tasks on the board, delegate to other agents, and produce real deliverables.
 
-Current hot items:
-- SDR found 47 UAE leads, Singapore pipeline in progress — PAUSED pending Framework 4 approval
-- CTO blocked on nodylab.com build (Next.js/Hostinger VPS) — waiting on CMO brand guidelines
-- Token Analyst flagged Content Director at 847 tokens (target 400); CMO at 19.2k/30k daily budget
-- CFO policy: no paid ad spend until organic validates; all new hires must be fractional or performance-based
+Decision rights: Founders approve major distribution shifts, paid budgets >$500/mo, new market entry. CEO approves all else. Route anything requiring founder input via [DECISION:] so it reaches the Inbox.
 
-Decision rights: Founders approve major distribution shifts, paid budgets >$500/mo, new market entry. CEO approves all else.
-
-You are a live AI agent. Answer specifically using this context. Never give generic responses. If asked about decisions, explain the actual business reason. Keep replies under 5 sentences unless detail is explicitly requested.`;
+You are a live AI agent. Answer specifically using this context. Never give generic responses. When given a goal, produce actual work — tasks, plans, documents — not commentary about what you would do. Keep replies concise unless detail is requested.`;
 
 // ── MODEL TIERS + AGENTIC FORMAT (must be before agentSystemPrompts) ──
 const _CLEVEL_IDS    = new Set(['ceo','coo','cmo','cto','cfo']);
@@ -3190,23 +3117,23 @@ function setAgentLive(agentId, running) {
 
 // ── AGENTS OFFICE ──
 const _officeThoughts = {
-  ceo: ['Reviewing Framework 2 inputs from all C-Level...','Monitoring Framework 4 founder review...','Delegating Framework 6 to CMO + CTO...','Preparing board summary for founders...','Arbitrating cross-agent priority conflicts...'],
-  coo: ['Routing tasks across 17 agents...','SDR UAE pipeline: 47 leads, outreach gated on F4...','Scoping Framework 7 scale roadmap with CTO...','Monitoring meeting pipeline and client onboarding...'],
-  cmo: ['Framework 6: mapping competitor weaknesses...','Analyzing Make.com, Zapier, n8n positioning gaps...','Framework 4 distribution plan awaiting founder sign-off...','UAE + Singapore market signals: monitoring...'],
-  cto: ['Architecture spec 60% complete...','Waiting on CMO brand guidelines for nodylab.com...','Automata integration map in progress...','Reviewing QA test plan requirements...'],
-  cfo: ['Burn rate: $47/day API + infra + Apollo...','Runway: 8 months at current rate...','Phase-gate: no paid spend until organic validates...','Modeling break-even at $900/mo per client...'],
-  content: ['Awaiting brand guidelines from CMO...','Drafting website copy framework...','SEO keyword research for AI automation niche...'],
-  social: ['Monitoring UAE LinkedIn engagement signals...','Standing by for CMO direction post-F4...','Preparing content calendar template...'],
-  art: ['Working on social template 2 of 3...','Brand asset library: 60% complete...','Designing ad creative variants for launch...'],
-  campaign: ['Campaign on hold — CFO spend gate active...','Preparing playbook for post-approval launch...','A/B test framework ready to deploy...'],
-  dev: ['Awaiting CTO architecture spec...','Next.js project structure planned...','Hostinger VPS config: ready to deploy...'],
-  uxui: ['Wireframes ready — waiting on brand guidelines...','Dashboard UX flows documented...','UI kit: standing by for CMO sign-off...'],
-  ga4: ['GA4 property configured — awaiting website launch...','Conversion funnel blueprints drafted...','Geo tracking: UAE, Singapore, EU priority geos set...'],
-  qa: ['Test plan drafted — no code to test yet...','E2E suite framework ready to execute...','Regression checklist: waiting for dev handoff...'],
-  sdr: ['UAE leads: 47 identified — outreach PAUSED...','Waiting for Framework 4 approval to activate...','Singapore pipeline: 12 prospects mapped...','Apollo sequences ready to launch on approval...'],
-  sales: ['Demo playbook ready — awaiting qualified leads...','Proposal template at $900/mo starting price...','Standing by for SDR handoff...'],
-  finance: ['Daily cost report: API $47, burn on track...','Runway model updated: 8 months...','Preparing weekly CFO snapshot...'],
-  audit: ['Content Director: 847 tokens — compression pending...','CMO at 19.2k/30k daily budget...','Total system: 42k/200k tokens today...','Routing rec: SDR → Haiku model for ICP tasks...'],
+  ceo: ['Online and ready — send me a message to begin.','Monitoring the org. Awaiting your direction.','Standing by to plan, delegate, and execute.'],
+  coo: ['Operations ready. Awaiting task assignments.','Standing by to coordinate across all agents.','Ready to route work and track execution.'],
+  cmo: ['Marketing engine on standby.','Ready for market, distribution, or content direction.','Awaiting founder input to begin.'],
+  cto: ['Technical stack ready. Awaiting specifications.','Standing by for architecture or build tasks.','Ready when the product direction is confirmed.'],
+  cfo: ['Finance model initialized. No data yet.','Standing by for budget or runway tasks.','Ready to model costs once you start the sprint.'],
+  content: ['Ready to write. Awaiting brief from CMO.','Standing by for content direction.','No tasks yet — send a message to begin.'],
+  social: ['Social channels ready. Awaiting strategy.','Standing by for campaign direction.','Ready to execute once brand is defined.'],
+  art: ['Design tools ready. Awaiting brand brief.','Standing by for creative direction.','Ready to build visual assets on your command.'],
+  campaign: ['Campaign engine on standby.','Awaiting budget approval and creative assets.','Ready to launch when the strategy is locked.'],
+  dev: ['Dev environment ready. Awaiting spec.','Standing by for architecture handoff from CTO.','Ready to build once the stack is confirmed.'],
+  uxui: ['UX tools ready. Awaiting product direction.','Standing by for wireframe brief.','Ready to design once brand guidelines arrive.'],
+  ga4: ['Analytics ready. Awaiting site launch.','Standing by to configure tracking.','Ready to instrument once the product is live.'],
+  qa: ['QA framework ready. No code to test yet.','Standing by for dev handoff.','Ready to execute test plan on your command.'],
+  sdr: ['Outreach engine ready. Awaiting ICP brief.','Standing by for market and messaging direction.','Ready to prospect once the offer is locked.'],
+  sales: ['Sales playbook ready. Awaiting qualified leads.','Standing by for SDR handoff.','Ready to close once outreach begins.'],
+  finance: ['Cost model ready. Awaiting first data inputs.','Standing by for budget and spend events.','Ready to update runway once the sprint begins.'],
+  audit: ['Token audit system online. No activity yet.','Standing by to monitor agent spend.','Ready to flag anomalies when agents are active.'],
 };
 
 const _neuralLinks = [
@@ -3378,78 +3305,15 @@ setTimeout(() => {
 // ══════════════════════════════════
 // LIVE MONITOR DATA + RENDER
 // ══════════════════════════════════
-const monitorData = [
-  {
-    id:'ceo', name:'CEO Agent', initials:'CE', color:'linear-gradient(135deg,#4f8ef7,#a78bfa)',
-    status:'active', statusLabel:'Active', statusClass:'msp-active',
-    currentTask:'Delegating Framework 6 to CMO + CTO',
-    trace:[
-      { time:'09:14', dot:'#4f8ef7', action:'<strong>Read</strong> Framework 1 output — market breakdown complete. Marked as done.', meta:'→ board.t1: done' },
-      { time:'09:15', dot:'#22c97a', action:'<strong>Delegated</strong> Framework 6 to <em>CMO + CTO</em> — competitor weakness map. Priority: High.', meta:'→ msg: CMO, CTO' },
-      { time:'09:16', dot:'#4f8ef7', action:'<strong>Updated</strong> weekly board summary — added 3 pending founder decisions.', meta:'→ doc: board_summary_w15' },
-      { time:'09:17', dot:'#a78bfa', action:'<strong>Awaiting</strong> CTO architecture spec before unblocking website build.', meta:'→ watching: CTO.deliverable' },
-    ]
-  },
-  {
-    id:'cmo', name:'CMO Agent', initials:'CM', color:'linear-gradient(135deg,#f5a623,#854f0b)',
-    status:'running', statusLabel:'Running', statusClass:'msp-running',
-    currentTask:'Framework 6 — Competitor weakness map',
-    trace:[
-      { time:'09:15', dot:'#f5a623', action:'<strong>Received</strong> delegation from CEO — Framework 6. Competitor analysis assigned.', meta:'← msg: CEO' },
-      { time:'09:16', dot:'#f5a623', action:'<strong>Queued</strong> web research on: Make.com, Zapier, n8n, Relevance AI, Gumloop.', meta:'→ research: 5 targets' },
-      { time:'09:17', dot:'#22c97a', action:'<strong>Completed</strong> analysis on Make.com — strength: ease of use. Weakness: no custom hosting.', meta:'→ competitor[1]: done' },
-      { time:'09:18', dot:'#f5a623', action:'<em>Running</em> analysis on Zapier — scanning pricing, reviews, G2 complaints.', meta:'→ competitor[2]: in progress' },
-    ]
-  },
-  {
-    id:'cto', name:'CTO Agent', initials:'CT', color:'linear-gradient(135deg,#2dd4bf,#0f6e56)',
-    status:'active', statusLabel:'Active', statusClass:'msp-active',
-    currentTask:'Architecture spec — nodylab.com',
-    trace:[
-      { time:'09:10', dot:'#2dd4bf', action:'<strong>Received</strong> task from CEO — website architecture spec required.', meta:'← msg: CEO' },
-      { time:'09:11', dot:'#2dd4bf', action:'<strong>Evaluated</strong> stack options: Next.js vs Astro vs plain HTML. Recommended Next.js for SSR + SEO.', meta:'→ decision: Next.js' },
-      { time:'09:13', dot:'#22c97a', action:'<strong>Drafted</strong> hosting config for Hostinger VPS — Node.js 20, PM2, Nginx reverse proxy.', meta:'→ doc: hosting_config_v1' },
-      { time:'09:15', dot:'#2dd4bf', action:'<strong>Waiting</strong> on brand guidelines from CMO before finalizing component structure.', meta:'→ blocked by: CMO.brand_guidelines' },
-    ]
-  },
-  {
-    id:'sdr', name:'SDR Agent', initials:'SD', color:'linear-gradient(135deg,#f05c5c,#5c1a1a)',
-    status:'running', statusLabel:'Running', statusClass:'msp-running',
-    currentTask:'ICP research — UAE + Singapore',
-    trace:[
-      { time:'08:50', dot:'#f05c5c', action:'<strong>Started</strong> ICP research pass for UAE market. Target: founders and ops leads, 10–50 person firms.', meta:'→ market: UAE' },
-      { time:'09:00', dot:'#f05c5c', action:'<strong>Scraped</strong> LinkedIn Sales Navigator — 47 matching profiles identified in UAE.', meta:'→ leads: 47 found' },
-      { time:'09:10', dot:'#22c97a', action:'<strong>Completed</strong> UAE pass. Starting Singapore — target: fintech, legal, SaaS operators.', meta:'→ market: SG' },
-      { time:'09:18', dot:'#f5a623', action:'<em>Running</em> Singapore pass — 23 profiles found so far, filtering by seniority and company size.', meta:'→ leads: 23 / ~60 expected' },
-    ]
-  },
-  {
-    id:'audit', name:'Token Analyst', initials:'TA', color:'linear-gradient(135deg,#f09595,#501313)',
-    status:'monitoring', statusLabel:'Monitoring', statusClass:'msp-monitor',
-    currentTask:'Audit cycle — all agents',
-    trace:[
-      { time:'09:00', dot:'#f09595', action:'<strong>Audit started</strong> — daily token baseline reset. Budget: 200k tokens.', meta:'→ budget: 200k' },
-      { time:'09:08', dot:'#f05c5c', action:'<strong>Alert</strong> — Content Director system prompt is 847 tokens. 41% above 600-token target.', meta:'→ agent: content · excess: 247 tok' },
-      { time:'09:12', dot:'#22c97a', action:'<strong>Recommendation sent</strong> to CMO — downgrade SDR ICP research task to Haiku model. Saves ~78% cost per call.', meta:'→ saving: ~$1.80/day' },
-      { time:'09:17', dot:'#f09595', action:'<em>Monitoring</em> CMO token spend — currently at 19.2k / 30k. On track, no alert yet.', meta:'→ CMO: 64% of budget' },
-    ]
-  },
-  {
-    id:'finance', name:'Finance Analyst', initials:'FA', color:'linear-gradient(135deg,#86efac,#27500a)',
-    status:'idle', statusLabel:'Idle', statusClass:'msp-idle',
-    currentTask:'Waiting for monthly close',
-    trace:[
-      { time:'08:00', dot:'#86efac', action:'<strong>Filed</strong> daily cost model — API spend $47/day, Hostinger $17/mo, Apollo $89/mo.', meta:'→ doc: cost_model_apr6' },
-      { time:'08:15', dot:'#22c97a', action:'<strong>Updated</strong> runway projection — 8 months at current burn before first revenue needed.', meta:'→ runway: 8mo' },
-      { time:'08:30', dot:'#86efac', action:'<strong>Flagged</strong> to CEO — break-even at 1 client ($900/mo retainer). Priority: first client ASAP.', meta:'→ msg: CEO' },
-      { time:'09:00', dot:'#505a6b', action:'No new tasks assigned. Idle until next cost event or budget alert from Token Analyst.', meta:'→ status: idle' },
-    ]
-  },
-];
+const monitorData = [];
 
 function renderMonitor() {
   const grid = document.getElementById('monitor-grid');
   if (!grid) return;
+  if (!monitorData.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px 0;font-size:12px;color:var(--text3);opacity:0.6;">No agent activity yet — send a message to a C-level agent to begin.</div>`;
+    return;
+  }
   grid.innerHTML = monitorData.map(a => `
     <div class="monitor-card" data-agent="${a.id}">
       <div class="mc-header">
@@ -3484,170 +3348,71 @@ function renderMonitor() {
 // TASK DRAWER DATA + LOGIC
 // ══════════════════════════════════
 const taskDetailData = {
-  t1: {
-    tag:'Framework 1', tagBg:'rgba(34,201,122,0.15)', tagColor:'#22c97a',
-    title:'Market breakdown system',
-    desc:'Full TAM/SAM/SOM analysis for the AI automation services market. CMO delivered 4 structured sections: market sizing with $57B TAM identified, top 5 demand trends, top 5 underserved opportunities, and where VC/PE capital is actively flowing.',
-    meta:{ Status:'✓ Done', Owner:'CMO', Priority:'High', Deadline:'Week 1', Framework:'1 of 7', Sprint:'Launch Phase 1' },
-    agents:[
-      { initials:'CM', color:'linear-gradient(135deg,#f5a623,#854f0b)', name:'CMO' },
-      { initials:'CT', color:'linear-gradient(135deg,#2dd4bf,#0f6e56)', name:'CTO' },
-      { initials:'CE', color:'linear-gradient(135deg,#4f8ef7,#a78bfa)', name:'CEO' },
-    ],
-    log:[
-      { icon:'⬡', iconBg:'rgba(79,142,247,0.15)', iconColor:'#4f8ef7', actor:'CEO → CMO', text:'Delegated Framework 1. Requested market breakdown for AI automation services targeting SMBs in USA, UK, EU, UAE, Singapore, AU. Output: under 600 words, 4 sections.', time:'Apr 6 · 08:00', badge:'', badgeBg:'', badgeColor:'' },
-      { icon:'◎', iconBg:'rgba(245,166,35,0.15)', iconColor:'#f5a623', actor:'CMO', text:'Started web research across GrandView, Mordor Intelligence, ResearchAndMarkets. Cross-referenced AI services market data with SMB adoption stats.', time:'Apr 6 · 08:20', badge:'Research started', badgeBg:'rgba(245,166,35,0.12)', badgeColor:'#f5a623' },
-      { icon:'◎', iconBg:'rgba(245,166,35,0.15)', iconColor:'#f5a623', actor:'CMO', text:'TAM identified: $57B AI services market (2026, 51% CAGR). SAM scoped to $8.5B–$11.4B for English-speaking SMB/mid-market. SOM estimated $85K–$570K ARR in Year 1.', time:'Apr 6 · 09:10', badge:'Section 1 complete', badgeBg:'rgba(34,201,122,0.12)', badgeColor:'#22c97a' },
-      { icon:'◎', iconBg:'rgba(245,166,35,0.15)', iconColor:'#f5a623', actor:'CMO', text:'Identified 5 demand trends. Key insight: 88% organizations use AI but only 33% have scaled it — the "execution gap" is the real product. Flagged to CEO as primary positioning angle.', time:'Apr 6 · 09:30', badge:'Sections 2–3 complete', badgeBg:'rgba(34,201,122,0.12)', badgeColor:'#22c97a' },
-      { icon:'✓', iconBg:'rgba(34,201,122,0.15)', iconColor:'#22c97a', actor:'CEO → Founders', text:'Framework 1 approved. CEO synthesis note added: "NodyLab\'s Automata infrastructure directly addresses the execution gap — the #1 unmet need in the market." Delivered to Cristiano and Carlo.', time:'Apr 6 · 10:00', badge:'Approved · Done', badgeBg:'rgba(34,201,122,0.12)', badgeColor:'#22c97a' },
-    ]
-  },
-  t2: {
-    tag:'Framework 2', tagBg:'rgba(79,142,247,0.15)', tagColor:'#4f8ef7',
-    title:'Problem prioritization engine',
-    desc:'CEO collecting inputs from COO, CMO, and CTO — each submits their top 10 problems in the AI services buying market. CEO synthesizes into a master priority table scored on Urgency, Willingness to Pay, and Growth Trajectory.',
-    meta:{ Status:'In Progress', Owner:'CEO', Priority:'High', Deadline:'Week 1', Framework:'2 of 7', Sprint:'Launch Phase 1' },
-    agents:[
-      { initials:'CE', color:'linear-gradient(135deg,#4f8ef7,#a78bfa)', name:'CEO' },
-      { initials:'CO', color:'linear-gradient(135deg,#22c97a,#0f5c36)', name:'COO' },
-      { initials:'CM', color:'linear-gradient(135deg,#f5a623,#854f0b)', name:'CMO' },
-      { initials:'CT', color:'linear-gradient(135deg,#2dd4bf,#0f6e56)', name:'CTO' },
-    ],
-    log:[
-      { icon:'⬡', iconBg:'rgba(79,142,247,0.15)', iconColor:'#4f8ef7', actor:'CEO', text:'Broadcast Framework 2 briefing to COO, CMO, CTO. Each agent to submit top 10 problems with Urgency (1–10), WTP (1–10), trend label, and complaint signal.', time:'Apr 6 · 09:15', badge:'Briefing sent', badgeBg:'rgba(79,142,247,0.12)', badgeColor:'#4f8ef7' },
-      { icon:'◎', iconBg:'rgba(34,201,122,0.15)', iconColor:'#22c97a', actor:'COO', text:'Submitted 10 problems. Top 3: (1) No clear ROI measurement for AI tools — Urgency 9, WTP 9. (2) Integration complexity with existing CRMs — Urgency 8, WTP 8. (3) Churn after 30-day pilots — Urgency 8, WTP 7.', time:'Apr 6 · 09:40', badge:'COO input received', badgeBg:'rgba(34,201,122,0.12)', badgeColor:'#22c97a' },
-      { icon:'◎', iconBg:'rgba(245,166,35,0.15)', iconColor:'#f5a623', actor:'CMO', text:'Submitted 10 problems from marketing lens. Top signal: 67% of organizations report AI tool sprawl — too many disconnected tools. Complaint signal: yes, high frequency on G2, Reddit r/entrepreneur.', time:'Apr 6 · 09:55', badge:'CMO input received', badgeBg:'rgba(34,201,122,0.12)', badgeColor:'#22c97a' },
-      { icon:'◉', iconBg:'rgba(79,142,247,0.1)', iconColor:'#4f8ef7', actor:'CTO', text:'Input pending. CTO currently blocked on website architecture spec. CEO flagged dependency — will collect CTO input by EOD.', time:'Apr 6 · 10:05', badge:'Waiting on CTO', badgeBg:'rgba(245,166,35,0.12)', badgeColor:'#f5a623' },
-    ]
-  },
-  t3: {
-    tag:'Framework 3', tagBg:'rgba(245,166,35,0.15)', tagColor:'#f5a623',
-    title:'Offer creation framework',
-    desc:'CMO + COO to build a high-converting offer for each of NodyLab\'s top 3 problems identified in Framework 2. Structured exactly like a landing page: headline, ICP, value prop, offer components, pricing tiers, guarantee, competitive edge.',
-    meta:{ Status:'Backlog', Owner:'CMO + COO', Priority:'High', Deadline:'Week 2', Framework:'3 of 7', Sprint:'Launch Phase 1' },
-    agents:[
-      { initials:'CM', color:'linear-gradient(135deg,#f5a623,#854f0b)', name:'CMO' },
-      { initials:'CO', color:'linear-gradient(135deg,#22c97a,#0f5c36)', name:'COO' },
-      { initials:'CE', color:'linear-gradient(135deg,#4f8ef7,#a78bfa)', name:'CEO' },
-    ],
-    log:[
-      { icon:'⬡', iconBg:'rgba(79,142,247,0.15)', iconColor:'#4f8ef7', actor:'CEO', text:'Framework 3 queued. Blocked on Framework 2 completion — offer creation requires the finalized problem priority table. Will unlock automatically when CEO approves Framework 2 output.', time:'Apr 6 · 09:16', badge:'Blocked → queued', badgeBg:'rgba(80,90,107,0.2)', badgeColor:'#505a6b' },
-    ]
-  },
-  t4: {
-    tag:'Framework 4', tagBg:'rgba(167,139,250,0.15)', tagColor:'#a78bfa',
-    title:'Distribution domination plan',
-    desc:'CMO delivered a 30-day distribution plan for NodyLab targeting international decision-makers (founders, ops leads, CTOs) in USA, UK, EU, UAE, Singapore, AU on a lean bootstrap budget. Now pending CEO review before founder approval.',
-    meta:{ Status:'In Review', Owner:'CEO', Priority:'High', Deadline:'Week 2', Framework:'4 of 7', Sprint:'Launch Phase 1' },
-    agents:[
-      { initials:'CM', color:'linear-gradient(135deg,#f5a623,#854f0b)', name:'CMO' },
-      { initials:'CE', color:'linear-gradient(135deg,#4f8ef7,#a78bfa)', name:'CEO' },
-      { initials:'CO', color:'linear-gradient(135deg,#22c97a,#0f5c36)', name:'COO' },
-    ],
-    log:[
-      { icon:'◎', iconBg:'rgba(245,166,35,0.15)', iconColor:'#f5a623', actor:'CMO', text:'Completed 30-day distribution plan. Top 5 channels identified: (1) LinkedIn outreach — highest ROI for B2B, (2) Cold email via Apollo.io, (3) LinkedIn content (thought leadership), (4) Reddit r/entrepreneur + niche forums, (5) Partner referrals from adjacent agencies.', time:'Apr 6 · 08:45', badge:'Draft complete', badgeBg:'rgba(245,166,35,0.12)', badgeColor:'#f5a623' },
-      { icon:'◎', iconBg:'rgba(245,166,35,0.15)', iconColor:'#f5a623', actor:'CMO', text:'Organic vs paid split recommendation: 90% organic / 10% paid in months 1–3. Rationale: bootstrap constraint + LinkedIn organic outperforms paid for B2B under $2k/month budget.', time:'Apr 6 · 09:00', badge:'', badgeBg:'', badgeColor:'' },
-      { icon:'⬡', iconBg:'rgba(79,142,247,0.15)', iconColor:'#4f8ef7', actor:'CEO', text:'Reviewing CMO distribution plan. Initial read: channel 1 and 2 align with outreach strategy. Flagging channel 5 (partner referrals) as a Phase 2 play — too early for month 1. Will revise and send to founders.', time:'Apr 6 · 10:10', badge:'Under review', badgeBg:'rgba(245,166,35,0.12)', badgeColor:'#f5a623' },
-    ]
-  },
-  t5: {
-    tag:'Framework 5', tagBg:'rgba(34,201,122,0.15)', tagColor:'#22c97a',
-    title:'Viral content engine',
-    desc:'CMO → Content Director to build a repeatable content system: 10 high-converting hooks with emotional trigger labels, a content format matrix across 3+ platforms, a shareability audit, and a weekly posting template.',
-    meta:{ Status:'Backlog', Owner:'CMO', Priority:'Medium', Deadline:'Week 2', Framework:'5 of 7', Sprint:'Launch Phase 1' },
-    agents:[
-      { initials:'CM', color:'linear-gradient(135deg,#f5a623,#854f0b)', name:'CMO' },
-      { initials:'CD', color:'linear-gradient(135deg,#f472b6,#993556)', name:'Content Dir.' },
-      { initials:'AD', color:'linear-gradient(135deg,#f0997b,#712b13)', name:'Art Designer' },
-    ],
-    log:[
-      { icon:'⬡', iconBg:'rgba(79,142,247,0.15)', iconColor:'#4f8ef7', actor:'CEO', text:'Framework 5 queued. Lower priority than 1, 2, 6. CMO to begin once Framework 4 is approved by founders. Content Director and Art Designer on standby.', time:'Apr 6 · 09:16', badge:'Queued', badgeBg:'rgba(80,90,107,0.2)', badgeColor:'#505a6b' },
-    ]
-  },
-  t6: {
-    tag:'Framework 6', tagBg:'rgba(45,212,191,0.15)', tagColor:'#2dd4bf',
-    title:'Competitor weakness map',
-    desc:'CMO + CTO analyzing the top 5 competitors in AI automation services for SMBs and mid-market: Make.com, Zapier, n8n, Relevance AI, Gumloop. Output: competitor table with strengths/weaknesses + gap analysis + NodyLab positioning recommendation.',
-    meta:{ Status:'In Progress', Owner:'CMO + CTO', Priority:'High', Deadline:'Week 1', Framework:'6 of 7', Sprint:'Launch Phase 1' },
-    agents:[
-      { initials:'CM', color:'linear-gradient(135deg,#f5a623,#854f0b)', name:'CMO' },
-      { initials:'CT', color:'linear-gradient(135deg,#2dd4bf,#0f6e56)', name:'CTO' },
-      { initials:'CE', color:'linear-gradient(135deg,#4f8ef7,#a78bfa)', name:'CEO' },
-    ],
-    log:[
-      { icon:'⬡', iconBg:'rgba(79,142,247,0.15)', iconColor:'#4f8ef7', actor:'CEO → CMO + CTO', text:'Delegated Framework 6 at 09:15. Priority: High. Deadline: end of week. CEO will synthesize output into NodyLab positioning statement before sending to founders.', time:'Apr 6 · 09:15', badge:'Delegated', badgeBg:'rgba(79,142,247,0.12)', badgeColor:'#4f8ef7' },
-      { icon:'◎', iconBg:'rgba(245,166,35,0.15)', iconColor:'#f5a623', actor:'CMO', text:'Started with Make.com. Core offer: visual workflow automation, no-code. Strength: ease of use, large template library. Weakness: no custom hosting, per-operation pricing punishes high-volume users. Audience ignored: technical teams who need self-hosted infrastructure.', time:'Apr 6 · 09:17', badge:'Competitor 1 done', badgeBg:'rgba(34,201,122,0.12)', badgeColor:'#22c97a' },
-      { icon:'◉', iconBg:'rgba(245,166,35,0.1)', iconColor:'#f5a623', actor:'CMO', text:'Currently analyzing Zapier — reviewing G2 reviews for complaint patterns. Early finding: "Zapier gets expensive fast" is the #1 complaint across 500+ reviews.', time:'Apr 6 · 09:18', badge:'In progress', badgeBg:'rgba(245,166,35,0.12)', badgeColor:'#f5a623' },
-    ]
-  },
-  t7: {
-    tag:'Framework 7', tagBg:'rgba(240,92,92,0.15)', tagColor:'#f05c5c',
-    title:'Scale system roadmap',
-    desc:'COO + CTO to build a phased execution roadmap to scale NodyLab to $30k MRR within 12 months. Four phases: Stabilize (1–2), Automate (3–4), Delegate (5–8), Scale (9–12). Includes bottleneck predictions and one leading metric per phase.',
-    meta:{ Status:'Backlog', Owner:'COO + CTO', Priority:'Medium', Deadline:'Month 2', Framework:'7 of 7', Sprint:'Launch Phase 1' },
-    agents:[
-      { initials:'CO', color:'linear-gradient(135deg,#22c97a,#0f5c36)', name:'COO' },
-      { initials:'CT', color:'linear-gradient(135deg,#2dd4bf,#0f6e56)', name:'CTO' },
-      { initials:'CE', color:'linear-gradient(135deg,#4f8ef7,#a78bfa)', name:'CEO' },
-    ],
-    log:[
-      { icon:'⬡', iconBg:'rgba(79,142,247,0.15)', iconColor:'#4f8ef7', actor:'CEO', text:'Framework 7 is intentionally last — the scale plan only makes sense once services are defined and first customer data exists. Scheduled for Month 2. COO + CTO briefed to monitor progress markers before starting.', time:'Apr 6 · 09:16', badge:'Deferred → Month 2', badgeBg:'rgba(80,90,107,0.2)', badgeColor:'#505a6b' },
-    ]
-  },
+  /* Sprint-specific detail data is written here by Claude Code when planning sprints.
+     Agent-created tasks are rendered dynamically from taskData. */
+  _placeholder: { tag:'', tagBg:'', tagColor:'', title:'', desc:'', meta:{}, agents:[], log:[] },
 };
 
 function openDrawer(taskId) {
   const d = taskDetailData[taskId];
-  if (!d) return;
+  const t = Object.values(taskData).flat().find(x => x.id === taskId);
+  if (!d && !t) return;
 
-  document.getElementById('d-tag').textContent = d.tag;
-  document.getElementById('d-tag').style.background = d.tagBg;
-  document.getElementById('d-tag').style.color = d.tagColor;
-  document.getElementById('d-title').textContent = d.title;
-  document.getElementById('d-desc').textContent = d.desc;
-
-  // Meta grid
-  const metaEl = document.getElementById('d-meta');
-  metaEl.innerHTML = Object.entries(d.meta).map(([k,v]) => `
-    <div class="dmeta">
-      <div class="dmeta-label">${k}</div>
-      <div class="dmeta-val">${v}</div>
-    </div>
-  `).join('');
-
-  // Agents
-  document.getElementById('d-agents').innerHTML = d.agents.map(a => `
-    <div class="ai-chip">
-      <div class="ai-chip-av" style="background:${a.color};">${a.initials}</div>
-      ${a.name}
-    </div>
-  `).join('');
-
-  // Decision log
-  document.getElementById('d-log').innerHTML = d.log.map(e => `
-    <div class="dl-entry">
-      <div class="dl-icon" style="background:${e.iconBg};color:${e.iconColor};">${e.icon}</div>
-      <div class="dl-body">
-        <div class="dl-actor">${e.actor}</div>
-        <div class="dl-text">${e.text}</div>
-        ${e.badge ? `<span class="dl-badge" style="background:${e.badgeBg};color:${e.badgeColor};border:1px solid ${e.badgeColor}33;">${e.badge}</span>` : ''}
-        <div class="dl-time">${e.time}</div>
+  if (d) {
+    document.getElementById('d-tag').textContent = d.tag;
+    document.getElementById('d-tag').style.background = d.tagBg;
+    document.getElementById('d-tag').style.color = d.tagColor;
+    document.getElementById('d-title').textContent = d.title;
+    document.getElementById('d-desc').textContent = d.desc;
+    document.getElementById('d-meta').innerHTML = Object.entries(d.meta).map(([k,v]) => `
+      <div class="dmeta"><div class="dmeta-label">${k}</div><div class="dmeta-val">${v}</div></div>
+    `).join('');
+    document.getElementById('d-agents').innerHTML = d.agents.map(a => `
+      <div class="ai-chip"><div class="ai-chip-av" style="background:${a.color};">${a.initials}</div>${a.name}</div>
+    `).join('');
+    document.getElementById('d-log').innerHTML = d.log.map(e => `
+      <div class="dl-entry">
+        <div class="dl-icon" style="background:${e.iconBg};color:${e.iconColor};">${e.icon}</div>
+        <div class="dl-body">
+          <div class="dl-actor">${e.actor}</div>
+          <div class="dl-text">${e.text}</div>
+          ${e.badge ? `<span class="dl-badge" style="background:${e.badgeBg};color:${e.badgeColor};border:1px solid ${e.badgeColor}33;">${e.badge}</span>` : ''}
+          <div class="dl-time">${e.time}</div>
+        </div>
       </div>
-    </div>
-  `).join('');
+    `).join('');
+  } else {
+    // Dynamic build from agent-created taskData entry
+    const pColors = { h:'#f05c5c', m:'#f5a623', l:'#22c97a' };
+    const pBgs = { h:'rgba(240,92,92,0.15)', m:'rgba(245,166,35,0.15)', l:'rgba(34,201,122,0.15)' };
+    const pLabels = { h:'High', m:'Medium', l:'Low' };
+    const p = t.priority || 'm';
+    document.getElementById('d-tag').textContent = t.tag || 'Agent Task';
+    document.getElementById('d-tag').style.background = pBgs[p];
+    document.getElementById('d-tag').style.color = pColors[p];
+    document.getElementById('d-title').textContent = t.title;
+    document.getElementById('d-desc').textContent = t.desc || '';
+    document.getElementById('d-meta').innerHTML = `
+      <div class="dmeta"><div class="dmeta-label">Priority</div><div class="dmeta-val" style="color:${pColors[p]};">${pLabels[p]}</div></div>
+      <div class="dmeta"><div class="dmeta-label">Owner</div><div class="dmeta-val">${t.owner || '—'}</div></div>
+    `;
+    document.getElementById('d-agents').innerHTML = t.owner
+      ? `<div class="ai-chip"><div class="ai-chip-av" style="background:${t.ownerColor};">${t.ownerInitials}</div>${t.owner}</div>`
+      : '<span style="font-size:11px;color:var(--text3);">No agents assigned.</span>';
+    document.getElementById('d-log').innerHTML = '<div style="font-size:11px;color:var(--text3);">No log entries yet.</div>';
+  }
 
-  // Deliverables section
+  // Deliverables section (works from taskData for all tasks)
   const dlvSection = document.getElementById('d-deliverables-section');
   if (dlvSection) {
-    const t = Object.values(taskData).flat().find(x => x.id === taskId);
-    const dlvs = (t && t.deliverables) || d.deliverables || [];
+    const dlvs = (t && t.deliverables) || (d && d.deliverables) || [];
     const approvalNeeded = t && t.requiresApproval;
     dlvSection.innerHTML = `
       ${approvalNeeded ? `<div class="approval-banner">
         <div class="approval-banner-icon">⚠</div>
         <div class="approval-banner-text">
           <div class="approval-banner-title">Founder approval required</div>
-          <div class="approval-banner-sub">${d.approvalNote || 'This task is blocked until you review and approve the deliverables below.'}</div>
+          <div class="approval-banner-sub">${(d && d.approvalNote) || 'This task is blocked until you review and approve the deliverables below.'}</div>
           <div class="approval-actions">
             <button class="btn-approve" onclick="approveTask('${taskId}')">✓ Approve</button>
             <button class="btn-request" onclick="requestChanges('${taskId}')">↩ Request changes</button>
@@ -3681,66 +3446,7 @@ const _founderInbox = (() => {
 })();
 
 function _defaultInbox() {
-  return [
-    {
-      id: 'inb-t4',
-      taskId: 't4',
-      status: 'pending',
-      urgent: true,
-      from: 'CEO Agent',
-      fromInitials: 'CE',
-      fromColor: 'linear-gradient(135deg,#4f8ef7,#a78bfa)',
-      tag: 'Framework 4',
-      tagColor: '#a78bfa',
-      tagBg: 'rgba(167,139,250,0.15)',
-      title: 'Distribution domination plan — needs your sign-off',
-      body: 'CMO completed the 30-day distribution plan. CEO has reviewed and flagged channel 5 (partner referrals) as Phase 2. The plan is ready for your approval. Once approved, SDR UAE outreach and Framework 5 content engine will unblock immediately.',
-      deliverables: [
-        { type:'doc', label:'30-Day Distribution Plan v1', url:'#' },
-        { type:'notion', label:'Channel Strategy Board', url:'#' },
-        { type:'ppt', label:'Exec Summary Slides', url:'#' },
-      ],
-      time: 'Apr 8 · 10:30',
-    },
-    {
-      id: 'inb-brand',
-      taskId: null,
-      status: 'pending',
-      urgent: true,
-      from: 'Art Designer',
-      fromInitials: 'AD',
-      fromColor: 'linear-gradient(135deg,#f0997b,#712b13)',
-      tag: 'Brand',
-      tagColor: '#f472b6',
-      tagBg: 'rgba(244,114,182,0.12)',
-      title: 'Brand direction needed before assets can be created',
-      body: 'I\'m ready to build the visual identity system — logo concepts, color palette, typography, and social templates. To start, I need your input on brand direction: tone (bold vs minimal), color mood, and any reference brands you admire. You can also upload your logo or brand brief in Admin → Brand.',
-      deliverables: [
-        { type:'figma', label:'Brand Moodboard (empty)', url:'#' },
-        { type:'doc', label:'Brand Brief Template', url:'#' },
-      ],
-      time: 'Apr 8 · 09:15',
-    },
-    {
-      id: 'inb-website',
-      taskId: null,
-      status: 'pending',
-      urgent: false,
-      from: 'UX/UI Designer',
-      fromInitials: 'UX',
-      fromColor: 'linear-gradient(135deg,#38bdf8,#0c447c)',
-      tag: 'Website',
-      tagColor: '#38bdf8',
-      tagBg: 'rgba(56,189,248,0.1)',
-      title: 'Website wireframes blocked — waiting on brand guidelines',
-      body: 'nodylab.com wireframes are ready to start once brand guidelines are approved. I need: logo final, primary/secondary colors, headline font choice, and the hero positioning statement from the CMO distribution plan. Fullstack Dev is on standby to build once the spec is locked.',
-      deliverables: [
-        { type:'figma', label:'Wireframe v0 (skeleton)', url:'#' },
-        { type:'doc', label:'Website Copy Brief', url:'#' },
-      ],
-      time: 'Apr 7 · 16:45',
-    },
-  ];
+  return [];
 }
 
 function _saveInbox() {
@@ -3758,6 +3464,7 @@ function _updateInboxBadge() {
   if (sub) sub.textContent = pending
     ? `${pending} decision${pending>1?'s':''} needed from you · agents are blocked until you respond`
     : 'All caught up — no pending decisions';
+  _updateOverviewStats();
 }
 
 function renderInbox() {
@@ -3919,6 +3626,7 @@ async function _executeDirectives(actions, fromAgentId, chatMsgsEl) {
       const [title, ownerId, priority] = action.parts;
       _createAgentTask(title, ownerId, priority, fromAgentId);
       _appendActionChip(chatMsgsEl, 'task', `📋 Task created: ${title}`);
+      _pushActivity({ icon:'📋', bg:'rgba(79,142,247,0.15)', color:'var(--accent)', text:`<strong>${fromAgent.name||fromAgentId}</strong> created task: ${title}` });
     }
 
     if (action.type === 'DECISION') {
@@ -3938,6 +3646,7 @@ async function _executeDirectives(actions, fromAgentId, chatMsgsEl) {
       _saveInbox();
       _updateInboxBadge();
       _appendActionChip(chatMsgsEl, 'decision', `⚠ Decision needed: ${question.slice(0,60)}${question.length>60?'…':''}`);
+      _pushActivity({ icon:'⚠', bg:'rgba(245,166,35,0.15)', color:'var(--amber)', text:`<strong>${fromAgent.name||fromAgentId}</strong> needs your decision: ${question.slice(0,80)}${question.length>80?'…':''}` });
     }
 
     if (action.type === 'DELIVERABLE') {
@@ -3971,6 +3680,7 @@ async function _executeDirectives(actions, fromAgentId, chatMsgsEl) {
       _saveInbox();
       _updateInboxBadge();
       _appendActionChip(chatMsgsEl, 'deliverable', `📄 ${title}`, () => openDeliverableDoc(id));
+      _pushActivity({ icon:'📄', bg:'rgba(167,139,250,0.15)', color:'var(--purple)', text:`<strong>${fromAgent.name||fromAgentId}</strong> produced deliverable: ${title} — ready for review` });
     }
 
     if (action.type === 'DELEGATE' && apiKey) {
@@ -4200,26 +3910,17 @@ function _renderMarkdown(text) {
 }
 
 // ── LIVE ACTIVITY FEED AUTO-UPDATE ──
-const _livePool = [
-  { icon:'⬡', bg:'rgba(79,142,247,0.15)', color:'var(--accent)',  text:'<strong>CEO</strong> reviewing Framework 2 inputs — synthesizing priority table from COO, CMO, CTO' },
-  { icon:'◎', bg:'rgba(245,166,35,0.15)',  color:'var(--amber)',   text:'<strong>CMO</strong> completed Zapier analysis — "gets expensive fast" is #1 complaint across 500+ reviews' },
-  { icon:'◈', bg:'rgba(45,212,191,0.15)',  color:'var(--teal)',    text:'<strong>CTO</strong> updated architecture spec — component structure 70% complete, Next.js confirmed' },
-  { icon:'✓', bg:'rgba(34,201,122,0.15)',  color:'var(--green)',   text:'<strong>SDR</strong> identified 12 more Singapore leads — total now 35 of ~60 target' },
-  { icon:'⚑', bg:'rgba(240,92,92,0.15)',   color:'var(--red)',     text:'<strong>Token Analyst</strong> flagged CMO spend at 22.4k / 30k daily limit — approaching threshold' },
-  { icon:'◎', bg:'rgba(244,114,182,0.15)', color:'var(--pink)',    text:'<strong>Art Designer</strong> completed LinkedIn template 1 of 3 — brand colours applied' },
-  { icon:'◎', bg:'rgba(245,166,35,0.15)',  color:'var(--amber)',   text:'<strong>CMO</strong> started n8n competitor analysis — self-hosted weakness identified' },
-  { icon:'⬡', bg:'rgba(79,142,247,0.15)', color:'var(--accent)',  text:'<strong>CEO</strong> updated OKR doc — "first client signed" added as sprint blocker' },
-  { icon:'◈', bg:'rgba(45,212,191,0.15)',  color:'var(--teal)',    text:'<strong>CTO</strong> sent brand guidelines request to CMO — blocking component structure' },
-  { icon:'✓', bg:'rgba(34,201,122,0.15)',  color:'var(--green)',   text:'<strong>Finance Analyst</strong> updated cost model — API spend now $49/day (+$2 vs yesterday)' },
-  { icon:'◎', bg:'rgba(245,166,35,0.15)',  color:'var(--amber)',   text:'<strong>CMO</strong> completed Relevance AI analysis — pricing opacity flagged as main weakness' },
-  { icon:'◈', bg:'rgba(167,139,250,0.15)', color:'var(--purple)',  text:'<strong>CTO</strong> researching Automata API rate limits — planning async task queue' },
-];
+const _livePool = [];
 let _liveIdx = 0;
 
-function _pushActivity() {
-  const feed = document.querySelector('#view-overview .activity-feed');
+// Called with a real activity item from agent interactions
+function _pushActivity(item) {
+  if (!item) return; // nothing to show
+  const feed = document.getElementById('overview-activity-feed');
   if (!feed) return;
-  const item = _livePool[_liveIdx++ % _livePool.length];
+  // Remove empty state placeholder if present
+  const placeholder = feed.querySelector('div:not(.af-item)');
+  if (placeholder) placeholder.remove();
   const el = document.createElement('div');
   el.className = 'af-item';
   el.innerHTML = `<div class="af-icon" style="background:${item.bg};color:${item.color};">${item.icon}</div><div class="af-text">${item.text}</div><div class="af-time">just now</div>`;
@@ -4228,13 +3929,16 @@ function _pushActivity() {
     t.textContent = i === 0 ? 'just now' : `${i * 2 + 1}m ago`;
   });
   while (feed.children.length > 8) feed.lastChild.remove();
+}
 
-  // Tick token stat
-  const statEl = document.querySelector('#view-overview .stat-grid .stat-card:last-child .stat-value');
-  if (statEl) {
-    const v = parseInt(statEl.textContent) || 42;
-    if (v < 195) statEl.textContent = (v + Math.floor(Math.random() * 2 + 1)) + 'k';
-  }
+function _updateOverviewStats() {
+  const totalTasks = Object.values(taskData).flat().length;
+  const inProgress = taskData.progress.length;
+  const pending = _founderInbox.filter(i => i.status === 'pending').length;
+  const taskEl = document.getElementById('stat-tasks');
+  const inboxEl = document.getElementById('stat-inbox');
+  if (taskEl) taskEl.textContent = totalTasks;
+  if (inboxEl) inboxEl.textContent = pending;
 }
 // ── PAUSE / RESUME ──
 window._agentsPaused = false;
@@ -4245,7 +3949,6 @@ function togglePause() {
 
   if (window._agentsPaused) {
     // Stop all intervals
-    clearInterval(window._activityInterval);
     clearInterval(window._monitorInterval);
     if (_officeTickerInterval) { clearInterval(_officeTickerInterval); _officeTickerInterval = null; }
     // Update UI
@@ -4264,7 +3967,6 @@ function togglePause() {
     });
   } else {
     // Restart intervals
-    window._activityInterval = setInterval(_pushActivity, 20000);
     window._monitorInterval = setInterval(_tickMonitor, 14000);
     if (document.getElementById('view-office').classList.contains('active')) {
       _officeTickerInterval = setInterval(_tickThoughts, 3200);
@@ -4287,7 +3989,7 @@ function togglePause() {
   }
 }
 
-window._activityInterval = setInterval(_pushActivity, 20000);
+// _pushActivity is now event-driven — no interval needed
 
 // ── LIVE MONITOR TRACE TICK ──
 const _tracePool = {
@@ -4330,6 +4032,36 @@ function _tickMonitor() {
   });
 }
 window._monitorInterval = setInterval(_tickMonitor, 14000);
+
+// ── RESET SPRINT ──
+function resetSprint() {
+  if (!confirm('Reset sprint? This clears all tasks, chat history, inbox, and deliverables. Agent configurations are kept.')) return;
+  // Clear data
+  taskData.backlog = [];
+  taskData.progress = [];
+  taskData.review = [];
+  taskData.done = [];
+  _founderInbox.length = 0;
+  Object.keys(_deliverableStore).forEach(k => delete _deliverableStore[k]);
+  Object.keys(chatHistory).forEach(k => delete chatHistory[k]);
+  // Clear localStorage
+  ['nodylab_chat','nodylab_deliverables','nodylab_inbox'].forEach(k => {
+    try { localStorage.removeItem(k); } catch(e) {}
+  });
+  // Reset activity feed
+  const feed = document.getElementById('overview-activity-feed');
+  if (feed) feed.innerHTML = '<div style="font-size:11px;color:var(--text3);padding:20px 0;text-align:center;opacity:0.6;">No activity yet — agents will log here as they work.</div>';
+  // Re-render all views
+  renderBoard();
+  renderMonitor();
+  _updateInboxBadge();
+  if (typeof renderInbox === 'function') renderInbox();
+  // Reset chat to default welcome
+  const msgs = document.getElementById('chat-msgs');
+  if (msgs) msgs.innerHTML = '';
+  selectAgent('ceo', document.querySelector('.alp-item'));
+  alert('Sprint reset. Board, inbox, chat and deliverables cleared.');
+}
 
 </script>
 </body>
