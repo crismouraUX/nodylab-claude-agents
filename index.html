@@ -1046,6 +1046,38 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
 .ai-chip { display: flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 8px; background: var(--bg2); border: 1px solid var(--border2); font-size: 11px; color: var(--text2); }
 .ai-chip-av { width: 18px; height: 18px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 700; color: #fff; }
 
+/* ── ROLE EDIT MODAL ── */
+.rm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.72); z-index: 300; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.18s; }
+.rm-overlay.open { opacity: 1; pointer-events: all; }
+.rm-modal { background: var(--bg1); border: 1px solid var(--border2); border-radius: 16px; width: 600px; max-height: 82vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 24px 64px rgba(0,0,0,0.5); }
+.rm-head { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+.rm-avatar { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.rm-title { flex: 1; min-width: 0; }
+.rm-name { font-size: 15px; font-weight: 700; font-family: var(--font-head); color: var(--text); }
+.rm-role-label { font-size: 11px; color: var(--text3); font-family: var(--font-mono); margin-top: 2px; }
+.rm-close { width: 28px; height: 28px; border-radius: 7px; background: var(--bg3); border: 1px solid var(--border2); color: var(--text2); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
+.rm-close:hover { background: var(--bg4); color: var(--text); }
+.rm-body { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 22px; }
+.rm-body::-webkit-scrollbar { width: 3px; }
+.rm-body::-webkit-scrollbar-thumb { background: var(--bg4); }
+.rm-sec-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text3); font-family: var(--font-mono); margin-bottom: 10px; }
+.rm-skills-wrap { display: flex; flex-wrap: wrap; gap: 7px; min-height: 28px; margin-bottom: 10px; }
+.rm-skill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 20px; background: var(--bg3); border: 1px solid var(--border2); font-size: 11px; color: var(--text2); }
+.rm-skill-x { cursor: pointer; color: var(--text3); line-height: 1; font-size: 13px; transition: color 0.1s; }
+.rm-skill-x:hover { color: var(--red); }
+.rm-add-row { display: flex; gap: 8px; }
+.rm-input { flex: 1; background: var(--bg2); border: 1px solid var(--border2); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: var(--text); font-family: var(--font-body); outline: none; transition: border-color 0.15s; }
+.rm-input:focus { border-color: rgba(79,142,247,0.4); }
+.rm-prompt-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.rm-gen-btn { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-family: var(--font-mono); cursor: pointer; border: 1px solid rgba(79,142,247,0.35); background: rgba(79,142,247,0.08); color: var(--accent); transition: all 0.15s; white-space: nowrap; }
+.rm-gen-btn:hover { background: rgba(79,142,247,0.15); border-color: rgba(79,142,247,0.5); }
+.rm-gen-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.rm-prompt-ta { width: 100%; background: var(--bg2); border: 1px solid var(--border2); border-radius: 10px; padding: 12px 14px; font-size: 12px; color: var(--text); font-family: var(--font-mono); line-height: 1.65; resize: vertical; min-height: 160px; max-height: 340px; outline: none; transition: border-color 0.15s; }
+.rm-prompt-ta:focus { border-color: rgba(79,142,247,0.4); }
+.rm-footer { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; gap: 10px; }
+.rm-save-msg { font-size: 11px; font-family: var(--font-mono); color: var(--green); opacity: 0; transition: opacity 0.3s; }
+.rm-save-msg.show { opacity: 1; }
+
 /* ── AGENTS OFFICE ── */
 .office-floor { position: relative; overflow: hidden; }
 .office-neural-svg { position: absolute; inset: 0; pointer-events: none; z-index: 2; width: 100%; height: 100%; overflow: visible; }
@@ -1633,6 +1665,46 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
 </div><!-- /app-body -->
 
 <!-- TASK DRAWER -->
+<!-- ROLE EDIT MODAL -->
+<div class="rm-overlay" id="rm-overlay" onclick="if(event.target===this)closeRoleEdit()">
+  <div class="rm-modal" id="rm-modal">
+    <div class="rm-head">
+      <div class="rm-avatar" id="rm-avatar"></div>
+      <div class="rm-title">
+        <div class="rm-name" id="rm-name"></div>
+        <div class="rm-role-label" id="rm-role-label"></div>
+      </div>
+      <button class="rm-close" onclick="closeRoleEdit()">✕</button>
+    </div>
+    <div class="rm-body">
+      <!-- SKILLS -->
+      <div>
+        <div class="rm-sec-label">Agent Skills</div>
+        <div class="rm-skills-wrap" id="rm-skills-wrap"></div>
+        <div class="rm-add-row">
+          <input class="rm-input" id="rm-skill-input" placeholder="Add a skill..." onkeydown="if(event.key==='Enter')addRoleSkill()">
+          <button class="btn btn-ghost" style="font-size:11px;padding:6px 12px;" onclick="addRoleSkill()">+ Add</button>
+        </div>
+      </div>
+      <!-- PROMPT -->
+      <div>
+        <div class="rm-prompt-header">
+          <div class="rm-sec-label" style="margin-bottom:0;">System Prompt</div>
+          <button class="rm-gen-btn" id="rm-gen-btn" onclick="generateRolePrompt()">✦ Generate with AI</button>
+        </div>
+        <textarea class="rm-prompt-ta" id="rm-prompt-ta" placeholder="System prompt for this agent..."></textarea>
+      </div>
+    </div>
+    <div class="rm-footer">
+      <span class="rm-save-msg" id="rm-save-msg">✓ Saved</span>
+      <div style="display:flex;gap:8px;margin-left:auto;">
+        <button class="btn btn-ghost" onclick="closeRoleEdit()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveRoleEdit()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
 <div class="drawer" id="task-drawer">
   <div class="drawer-head">
@@ -1932,7 +2004,9 @@ function renderDepts() {
 function renderRoles() {
   const rows = agentData.map(a => {
     const tierClass = a.tier === 'C-Level' ? 'tier-c' : a.tier === 'Cross-cutting' ? 'tier-x' : 'tier-s';
-    return `<tr>
+    const hasCustomPrompt = !!agentPromptsStore[a.id];
+    const promptStatus = hasCustomPrompt ? '✓ Custom' : a.prompt;
+    return `<tr onclick="openRoleEdit('${a.id}')" style="cursor:pointer;">
       <td>
         <div class="role-name-cell">
           <div class="role-av" style="background:${a.color};">${a.initials}</div>
@@ -1945,8 +2019,9 @@ function renderRoles() {
       <td><span class="tier-badge ${tierClass}">${a.tier}</span></td>
       <td style="color:var(--text2);text-transform:capitalize;">${a.dept === 'clevel' ? 'C-Level' : a.dept === 'crosscut' ? 'Cross-cutting' : a.dept}</td>
       <td><div class="deliverable-list">${a.deliverables.map(d=>`<div class="del-item">${d}</div>`).join('')}</div></td>
-      <td>${promptBadge(a.prompt)}</td>
+      <td>${hasCustomPrompt ? `<span style="color:var(--teal);font-size:10px;font-family:var(--font-mono);">✓ Custom</span>` : promptBadge(a.prompt)}</td>
       <td style="color:var(--text3);font-family:var(--font-mono);font-size:11px;">${a.reportsTo}</td>
+      <td><button class="btn btn-ghost" style="font-size:10px;padding:4px 10px;" onclick="event.stopPropagation();openRoleEdit('${a.id}')">Edit</button></td>
     </tr>`;
   });
   document.getElementById('roles-tbody').innerHTML = rows.join('');
@@ -2248,8 +2323,134 @@ const agentSystemPrompts = {
 };
 
 function _buildPrompt(agentId) {
-  const specific = agentSystemPrompts[agentId] || agentSystemPrompts.ceo;
-  return ORG_CONTEXT + '\n\n## Your Specific Role\n' + specific;
+  // Use custom saved prompt if exists, otherwise default
+  const specific = agentPromptsStore[agentId] || agentSystemPrompts[agentId] || agentSystemPrompts.ceo;
+  const skills = agentSkillsStore[agentId];
+  const skillsLine = skills && skills.length ? '\n\nInstalled skills: ' + skills.join(', ') + '.' : '';
+  return ORG_CONTEXT + '\n\n## Your Specific Role\n' + specific + skillsLine;
+}
+
+// ── AGENT SKILLS + PROMPTS STORE ──
+const agentSkillsStore = (() => { try { return JSON.parse(localStorage.getItem('nodylab_skills') || '{}'); } catch(e) { return {}; } })();
+const agentPromptsStore = (() => { try { return JSON.parse(localStorage.getItem('nodylab_prompts') || '{}'); } catch(e) { return {}; } })();
+
+let _rmCurrentId = null;
+
+function openRoleEdit(agentId) {
+  const a = agentData.find(x => x.id === agentId);
+  if (!a) return;
+  _rmCurrentId = agentId;
+
+  document.getElementById('rm-avatar').style.background = a.color;
+  document.getElementById('rm-avatar').textContent = a.initials;
+  document.getElementById('rm-name').textContent = a.name;
+  document.getElementById('rm-role-label').textContent = a.role + ' · ' + (a.dept === 'clevel' ? 'C-Level' : a.dept);
+
+  // Skills
+  _renderRmSkills(agentId);
+
+  // Prompt — use saved custom or default
+  const prompt = agentPromptsStore[agentId] || agentSystemPrompts[agentId] || '';
+  document.getElementById('rm-prompt-ta').value = prompt;
+
+  document.getElementById('rm-save-msg').classList.remove('show');
+  document.getElementById('rm-overlay').classList.add('open');
+}
+
+function closeRoleEdit() {
+  document.getElementById('rm-overlay').classList.remove('open');
+  _rmCurrentId = null;
+}
+
+function _renderRmSkills(agentId) {
+  const skills = agentSkillsStore[agentId] || [];
+  const wrap = document.getElementById('rm-skills-wrap');
+  wrap.innerHTML = skills.length
+    ? skills.map(s => `<span class="rm-skill">${escapeHtml(s)}<span class="rm-skill-x" onclick="removeRoleSkill('${agentId}','${s.replace(/'/g,"\\'")}')" title="Remove">×</span></span>`).join('')
+    : `<span style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">No skills installed yet</span>`;
+}
+
+function addRoleSkill() {
+  const inp = document.getElementById('rm-skill-input');
+  const val = inp.value.trim();
+  if (!val || !_rmCurrentId) return;
+  if (!agentSkillsStore[_rmCurrentId]) agentSkillsStore[_rmCurrentId] = [];
+  if (!agentSkillsStore[_rmCurrentId].includes(val)) agentSkillsStore[_rmCurrentId].push(val);
+  inp.value = '';
+  _renderRmSkills(_rmCurrentId);
+}
+
+function removeRoleSkill(agentId, skill) {
+  if (!agentSkillsStore[agentId]) return;
+  agentSkillsStore[agentId] = agentSkillsStore[agentId].filter(s => s !== skill);
+  _renderRmSkills(agentId);
+}
+
+async function generateRolePrompt() {
+  if (!_rmCurrentId) return;
+  const a = agentData.find(x => x.id === _rmCurrentId);
+  const apiKey = localStorage.getItem('nodylab_api_key');
+  const btn = document.getElementById('rm-gen-btn');
+  const ta = document.getElementById('rm-prompt-ta');
+
+  if (!apiKey) { ta.value = '⚠ Add your API key in Admin first.'; return; }
+
+  const skills = agentSkillsStore[_rmCurrentId] || [];
+  const userMsg = `Write a concise, specific system prompt for an AI agent at NodyLab (AI automation services company, B2B, launch phase, founded by Cristiano and Carlo).
+
+Agent: ${a.name}
+Role: ${a.role}
+Department: ${a.dept}
+Reports to: ${a.reportsTo}
+Deliverables: ${a.deliverables.join(', ')}
+Tags/focus: ${a.tags.join(', ')}
+${skills.length ? 'Installed skills: ' + skills.join(', ') : ''}
+
+Rules: Be direct and specific. Include the agent's current status and active tasks from NodyLab context. Max 4 sentences. No generic filler. Write only the system prompt text, nothing else.`;
+
+  btn.disabled = true;
+  btn.textContent = '⟳ Generating...';
+  ta.value = '';
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-3-5-haiku-20241022', max_tokens: 300, messages: [{ role: 'user', content: userMsg }] }),
+    });
+    const data = await resp.json();
+    if (data.content && data.content[0]) {
+      ta.value = data.content[0].text.trim();
+    } else {
+      ta.value = '⚠ Generation failed: ' + ((data.error && data.error.message) || 'unknown error');
+    }
+  } catch(e) {
+    ta.value = '⚠ Error: ' + e.message;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '✦ Generate with AI';
+}
+
+function saveRoleEdit() {
+  if (!_rmCurrentId) return;
+  const prompt = document.getElementById('rm-prompt-ta').value.trim();
+
+  // Save prompt
+  if (prompt) agentPromptsStore[_rmCurrentId] = prompt;
+  else delete agentPromptsStore[_rmCurrentId];
+  localStorage.setItem('nodylab_prompts', JSON.stringify(agentPromptsStore));
+
+  // Save skills
+  localStorage.setItem('nodylab_skills', JSON.stringify(agentSkillsStore));
+
+  // Update prompt badge in roles table
+  renderRoles();
+
+  // Show saved feedback
+  const msg = document.getElementById('rm-save-msg');
+  msg.classList.add('show');
+  setTimeout(() => msg.classList.remove('show'), 2000);
 }
 
 // ── CHAT HISTORY PER AGENT (persisted in localStorage) ──
