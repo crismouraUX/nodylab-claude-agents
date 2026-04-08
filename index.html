@@ -1118,7 +1118,8 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
   <span style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">Agent Command Center</span>
   <div class="header-div"></div>
   <div class="header-pills">
-    <span class="hpill live">17 agents online</span>
+    <button id="pause-btn" onclick="togglePause()" style="padding:4px 12px;border-radius:99px;font-size:11px;font-family:var(--font-mono);border:1px solid rgba(240,92,92,0.4);color:var(--red);background:rgba(240,92,92,0.08);cursor:pointer;transition:all 0.15s;letter-spacing:0.02em;">⏸ Pause agents</button>
+    <span class="hpill live" id="agents-status-pill">17 agents online</span>
     <span class="hpill">v1.0 · launch phase</span>
     <span class="hpill" id="clock"></span>
   </div>
@@ -2168,6 +2169,12 @@ function showViewDirect(name) {
 }
 
 async function sendMsg() {
+  if (window._agentsPaused) {
+    const inp = document.getElementById('chat-input');
+    inp.placeholder = '⏸ Agents paused — resume to chat';
+    setTimeout(() => { inp.placeholder = `Message ${(agentData.find(a=>a.id===window._currentAgent)||{}).name||'agent'}...`; }, 2000);
+    return;
+  }
   const inp = document.getElementById('chat-input');
   const text = inp.value.trim();
   if (!text) return;
@@ -3063,7 +3070,58 @@ function _pushActivity() {
     if (v < 195) statEl.textContent = (v + Math.floor(Math.random() * 2 + 1)) + 'k';
   }
 }
-setInterval(_pushActivity, 20000);
+// ── PAUSE / RESUME ──
+window._agentsPaused = false;
+function togglePause() {
+  window._agentsPaused = !window._agentsPaused;
+  const btn = document.getElementById('pause-btn');
+  const pill = document.getElementById('agents-status-pill');
+
+  if (window._agentsPaused) {
+    // Stop all intervals
+    clearInterval(window._activityInterval);
+    clearInterval(window._monitorInterval);
+    if (_officeTickerInterval) { clearInterval(_officeTickerInterval); _officeTickerInterval = null; }
+    // Update UI
+    btn.textContent = '▶ Resume agents';
+    btn.style.borderColor = 'rgba(34,201,122,0.4)';
+    btn.style.color = 'var(--green)';
+    btn.style.background = 'rgba(34,201,122,0.08)';
+    pill.textContent = '⏸ agents paused';
+    pill.style.borderColor = 'rgba(240,92,92,0.3)';
+    pill.style.color = 'var(--red)';
+    pill.style.background = 'rgba(240,92,92,0.06)';
+    // Dim all sidebar status dots
+    document.querySelectorAll('#agent-status-list .asm-dot').forEach(d => {
+      d.style.opacity = '0.25';
+      d.style.boxShadow = 'none';
+    });
+  } else {
+    // Restart intervals
+    window._activityInterval = setInterval(_pushActivity, 20000);
+    window._monitorInterval = setInterval(_tickMonitor, 14000);
+    if (document.getElementById('view-office').classList.contains('active')) {
+      _officeTickerInterval = setInterval(_tickThoughts, 3200);
+    }
+    // Restore UI
+    btn.textContent = '⏸ Pause agents';
+    btn.style.borderColor = 'rgba(240,92,92,0.4)';
+    btn.style.color = 'var(--red)';
+    btn.style.background = 'rgba(240,92,92,0.08)';
+    pill.textContent = '17 agents online';
+    pill.style.borderColor = '';
+    pill.style.color = '';
+    pill.style.background = '';
+    // Restore sidebar dots
+    document.querySelectorAll('#agent-status-list .asm-dot').forEach(d => {
+      d.style.opacity = '';
+      d.style.boxShadow = '';
+    });
+    renderSidebarStatus();
+  }
+}
+
+window._activityInterval = setInterval(_pushActivity, 20000);
 
 // ── LIVE MONITOR TRACE TICK ──
 const _tracePool = {
@@ -3105,7 +3163,7 @@ function _tickMonitor() {
     while (traceEl.children.length > 5) traceEl.firstChild.remove();
   });
 }
-setInterval(_tickMonitor, 14000);
+window._monitorInterval = setInterval(_tickMonitor, 14000);
 
 </script>
 </body>
