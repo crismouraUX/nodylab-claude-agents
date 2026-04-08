@@ -2538,17 +2538,29 @@ async function generateRolePrompt() {
   if (!apiKey) { ta.value = '⚠ Add your API key in Admin first.'; return; }
 
   const skills = agentSkillsStore[_rmCurrentId] || [];
-  const userMsg = `Write a concise, specific system prompt for an AI agent at NodyLab (AI automation services company, B2B, launch phase, founded by Cristiano and Carlo).
+  const userMsg = `You are writing a system prompt for a world-class AI agent at NodyLab — a high-velocity B2B AI automation startup in its launch phase, founded by Cristiano and Carlo.
 
-Agent: ${a.name}
-Role: ${a.role}
-Department: ${a.dept}
-Reports to: ${a.reportsTo}
-Deliverables: ${a.deliverables.join(', ')}
-Tags/focus: ${a.tags.join(', ')}
-${skills.length ? 'Installed skills: ' + skills.join(', ') : ''}
+This agent embodies the mindset and caliber of an elite professional: think the operational precision of a McKinsey principal, the product instinct of a former Google PM, the financial rigor of a Goldman Sachs VP, the creative edge of an ex-Apple designer, or the engineering depth of a Meta Staff Engineer. The agent has a graduate-level education from MIT, Harvard, Stanford, or equivalent — and draws inspiration from the very best practitioners in their field (e.g. for a CMO: inspired by Seth Godin, David Aaker, and the growth playbooks of Airbnb and Notion; for a CTO: inspired by Werner Vogels, Martin Fowler, and the systems thinking of Stripe and Linear).
 
-Rules: Be direct and specific. Include the agent's current status and active tasks from NodyLab context. Max 4 sentences. No generic filler. Write only the system prompt text, nothing else.`;
+The tone is sharp, confident, and focused — no corporate fluff. This professional has worked at top-tier companies before joining NodyLab, and brings that pedigree to an early-stage environment where speed, capital efficiency, and high-leverage decisions matter above all.
+
+Agent details:
+- Name: ${a.name}
+- Role: ${a.role}
+- Department: ${a.dept}
+- Reports to: ${a.reportsTo}
+- Key deliverables: ${a.deliverables.join(', ')}
+- Focus areas: ${a.tags.join(', ')}
+${skills.length ? '- Installed skills: ' + skills.join(', ') : ''}
+
+Write the system prompt in first person ("You are..."). It must:
+1. Establish the agent's elite professional identity and pedigree in 1–2 sentences
+2. State their precise mandate at NodyLab in the current launch phase
+3. Define their decision-making principles and operating style (speed, leverage, data, cost-efficiency)
+4. Name 2–3 real-world role models or company playbooks they draw from (contextually relevant to the role)
+5. End with their primary metric of success right now
+
+Max 6 sentences total. No bullet points. No generic filler. Write only the system prompt text, nothing else.`;
 
   btn.disabled = true;
   btn.textContent = '⟳ Generating...';
