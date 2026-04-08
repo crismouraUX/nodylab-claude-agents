@@ -562,7 +562,92 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
 .pri-l { background: rgba(34,201,122,0.15); color: var(--green); border: 1px solid rgba(34,201,122,0.2); }
 
 /* ── AGENT COMMS / CHAT ── */
-.comms-layout { display: grid; grid-template-columns: 260px 1fr; gap: 14px; height: 600px; }
+.comms-layout { display: grid; grid-template-columns: 260px 1fr 220px; gap: 14px; height: 600px; }
+
+/* ── TASK SIDEBAR ── */
+.task-sidebar {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.ts-head {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.ts-head-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  font-family: var(--font-head);
+}
+.ts-count {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text3);
+  background: var(--bg3);
+  padding: 2px 7px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+}
+.ts-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+.ts-list::-webkit-scrollbar { width: 0; }
+.ts-empty {
+  padding: 20px 12px;
+  font-size: 11px;
+  color: var(--text3);
+  font-family: var(--font-mono);
+  text-align: center;
+}
+.ts-item {
+  padding: 9px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.ts-item:hover { background: var(--bg4); border-color: var(--border2); }
+.ts-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+.ts-tag {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+.ts-status {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.ts-status.st-backlog { background: rgba(80,90,107,0.2); color: var(--text3); }
+.ts-status.st-progress { background: rgba(79,142,247,0.12); color: var(--accent); }
+.ts-status.st-review { background: rgba(245,166,35,0.12); color: var(--amber); }
+.ts-status.st-done { background: rgba(34,201,122,0.12); color: var(--green); }
+.ts-title {
+  font-size: 11px;
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.3;
+}
 .agent-list-panel {
   background: var(--bg2);
   border: 1px solid var(--border);
@@ -975,7 +1060,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
   <span style="font-size:11px;color:var(--text3);font-family:var(--font-mono);">Agent Command Center</span>
   <div class="header-div"></div>
   <div class="header-pills">
-    <span class="hpill live">16 agents online</span>
+    <span class="hpill live">17 agents online</span>
     <span class="hpill">v1.0 · launch phase</span>
     <span class="hpill" id="clock"></span>
   </div>
@@ -1009,7 +1094,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
       </div>
       <div class="nav-item" onclick="showView('roles',this)">
         <span class="nav-icon">◈</span> Roles
-        <span class="nav-badge">16</span>
+        <span class="nav-badge">17</span>
       </div>
       <div class="nav-item" onclick="showView('board',this)">
         <span class="nav-icon">▦</span> Task Board
@@ -1195,7 +1280,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
         <div class="section-head">
           <div>
             <div class="section-title">Agent Departments</div>
-            <div class="section-sub">16 agents · 6 departments · click any agent to open chat</div>
+            <div class="section-sub">17 agents · 6 departments · click any agent to open chat</div>
           </div>
           <div style="display:flex;gap:8px;align-items:center;">
             <div class="view-mode-toggle">
@@ -1529,6 +1614,7 @@ const agentData = [
   { id:'dev', name:'Fullstack Dev', role:'Sr. Fullstack Developer', dept:'tech', status:'idle', statusLabel:'Awaiting spec', color:'linear-gradient(135deg,#4f8ef7,#042c53)', initials:'FD', desc:'Website build, agent dashboard, API connections, Hostinger deployment.', tags:['react','nextjs','apis'], tasks:0, deliverables:['nodylab.com','Dashboard v1','Integration docs'], reportsTo:'CTO', prompt:'Pending', tier:'Specialist' },
   { id:'uxui', name:'UX/UI Designer', role:'Sr. UX/UI Designer', dept:'tech', status:'idle', statusLabel:'Idle', color:'linear-gradient(135deg,#38bdf8,#0c447c)', initials:'UX', desc:'Website wireframes, UI kit, brand visual system, dashboard UX flows.', tags:['figma','ux','design-system'], tasks:0, deliverables:['UI kit','Website mockups','Dashboard prototype'], reportsTo:'CTO', prompt:'Pending', tier:'Specialist' },
   { id:'ga4', name:'GA4 Analyst', role:'Sr. GA4 Analyst', dept:'tech', status:'idle', statusLabel:'Idle', color:'linear-gradient(135deg,#34d399,#065f46)', initials:'G4', desc:'Website analytics, GA4 setup, conversion funnels, traffic by geo.', tags:['ga4','analytics','conversion'], tasks:0, deliverables:['GA4 setup','Analytics report','Funnel suggestions'], reportsTo:'CTO', prompt:'Pending', tier:'Specialist' },
+  { id:'qa', name:'QA Agent', role:'Sr. QA Engineer', dept:'tech', status:'idle', statusLabel:'Idle', color:'linear-gradient(135deg,#fb923c,#431407)', initials:'QA', desc:'End-to-end quality assurance for nodylab.com and agent dashboard — test plans, E2E flows, regression suites, and bug reports before every deploy.', tags:['testing','e2e','regression'], tasks:0, deliverables:['Test plan','E2E suite','Bug report'], reportsTo:'CTO', prompt:'Pending', tier:'Specialist' },
   { id:'sdr', name:'SDR Agent', role:'Sales Development Rep', dept:'sales', status:'busy', statusLabel:'ICP research in progress', color:'linear-gradient(135deg,#f05c5c,#5c1a1a)', initials:'SD', desc:'Top-of-funnel outreach: finding leads, personalized messages, booking discovery calls.', tags:['linkedin','cold-email','icp'], tasks:1, deliverables:['Qualified leads/week','Meeting confirmations','Lead source report'], reportsTo:'COO', prompt:'Pending', tier:'Specialist' },
   { id:'sales', name:'Sales Engineer', role:'Sales Engineer', dept:'sales', status:'idle', statusLabel:'Idle', color:'linear-gradient(135deg,#fb923c,#6b430a)', initials:'SE', desc:'Technical demos, solution scoping, pricing, proposal writing.', tags:['demos','proposals','pricing'], tasks:0, deliverables:['Demo playbook','Proposal template','Win/loss analysis'], reportsTo:'COO', prompt:'Pending', tier:'Specialist' },
   { id:'finance', name:'Finance Analyst', role:'Finance Analyst', dept:'finance', status:'online', statusLabel:'Active', color:'linear-gradient(135deg,#86efac,#27500a)', initials:'FA', desc:'Tracks API costs, models revenue projections, flags budget overruns. Feeds data directly to CFO for decision-making.', tags:['finance','costs','projections'], tasks:1, deliverables:['Monthly report','Cost-per-lead model','Budget dashboard'], reportsTo:'CFO', prompt:'Pending', tier:'Specialist' },
@@ -1933,6 +2019,7 @@ async function sendMsg() {
 
   if (!chatHistory[agentId]) chatHistory[agentId] = [];
   chatHistory[agentId].push({ role: 'user', content: text });
+  _saveChat();
 
   const apiKey = localStorage.getItem('nodylab_api_key');
   if (apiKey) {
@@ -1949,7 +2036,7 @@ async function sendMsg() {
         body: JSON.stringify({
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 400,
-          system: agentSystemPrompts[agentId] || agentSystemPrompts.ceo,
+          system: _buildPrompt(agentId),
           messages: chatHistory[agentId],
         }),
       });
@@ -1957,6 +2044,7 @@ async function sendMsg() {
       if (data.content && data.content[0]) {
         const reply = data.content[0].text;
         chatHistory[agentId].push({ role: 'assistant', content: reply });
+        _saveChat();
         const think = document.getElementById(thinkId);
         if (think) think.outerHTML = `<div class="msg agent">
           <div class="msg-avatar" style="background:${a.color};">${a.initials}</div>
@@ -2012,28 +2100,73 @@ function fallbackReply(thinkId, a, agentId) {
   if (msgs) msgs.scrollTop = msgs.scrollHeight;
 }
 
+// ── SHARED ORG CONTEXT (injected into every agent prompt) ──
+const ORG_CONTEXT = `## NodyLab — Shared Org Context
+Company: NodyLab, AI automation services (B2B). Founded by Cristiano and Carlo. Pre-revenue, launch phase.
+Financials: Runway 8 months. Burn: $47/day API + $17/mo Hostinger + $89/mo Apollo. Break-even: 1 client at $900/mo.
+Markets: USA, UK, EU, UAE, Singapore, AU.
+
+Reporting structure:
+- CEO ← Founders (Cristiano, Carlo). CEO arbitrates all C-level conflicts.
+- COO, CMO, CTO, CFO → CEO
+- SDR, Sales Engineer → COO
+- Content Director, Social Analyst, Art Designer, Campaign Manager → CMO
+- Fullstack Dev, UX/UI Designer, GA4 Analyst, QA Agent → CTO
+- Finance Analyst → CFO
+- Token Analyst → all agents (cross-cutting audit role)
+
+7 Frameworks sprint:
+1. Market Breakdown — DONE (CMO: TAM/SAM/SOM, VC flow, demand trends)
+2. Problem Prioritization — IN PROGRESS (CEO collecting inputs from COO, CMO, CTO)
+3. Offer Creation — BACKLOG (CMO + COO)
+4. Distribution Domination Plan — UNDER FOUNDER REVIEW (CMO delivered, CEO reviewing; SDR UAE outreach is GATED on this approval because messaging must be locked before SDR burns hours on outreach)
+5. Viral Content Engine — BACKLOG
+6. Competitor Weakness Map — IN PROGRESS (CMO + CTO: Make.com, Zapier, n8n, Relevance AI, Gumloop)
+7. Scale System Roadmap — BACKLOG (COO + CTO, target $30k MRR in 12 months)
+
+Current hot items:
+- SDR found 47 UAE leads, Singapore pipeline in progress — PAUSED pending Framework 4 approval
+- CTO blocked on nodylab.com build (Next.js/Hostinger VPS) — waiting on CMO brand guidelines
+- Token Analyst flagged Content Director at 847 tokens (target 400); CMO at 19.2k/30k daily budget
+- CFO policy: no paid ad spend until organic validates; all new hires must be fractional or performance-based
+
+Decision rights: Founders approve major distribution shifts, paid budgets >$500/mo, new market entry. CEO approves all else.
+
+You are a live AI agent. Answer specifically using this context. Never give generic responses. If asked about decisions, explain the actual business reason. Keep replies under 5 sentences unless detail is explicitly requested.`;
+
 // ── AGENT SYSTEM PROMPTS ──
 const agentSystemPrompts = {
-  ceo: `You are the CEO Agent for NodyLab, an AI automation services company founded by Cristiano and Carlo. You set strategic direction, own OKRs, arbitrate C-level decisions, and are the primary interface to founders. Current sprint: 7 strategic frameworks. Framework 1 (market breakdown) done. Frameworks 2 and 6 in progress. Framework 4 in review. Be decisive, strategic, concise — max 4 sentences unless detail is requested.`,
-  coo: `You are the COO Agent for NodyLab. You own operations, meeting pipeline, client onboarding, and cross-agent task routing. Report to CEO. Be action-oriented and concise.`,
-  cmo: `You are the CMO Agent for NodyLab. You own brand, content strategy, campaigns, and lead generation for USA, UK, EU, UAE, Singapore, AU. Currently running Framework 6 (competitor map: Make.com, Zapier, n8n, Relevance AI, Gumloop). Framework 4 (distribution plan) under CEO review. Be data-driven and growth-focused.`,
-  cto: `You are the CTO Agent for NodyLab. You own tech stack, website architecture (nodylab.com — Next.js on Hostinger VPS), Automata integration, and APIs. Currently drafting the architecture spec, waiting on CMO brand guidelines. Be technical and precise.`,
-  content: `You are the Content Director Agent for NodyLab. You write website copy, blog posts, email sequences, and SEO strategy. Report to CMO. Note: your system prompt was flagged at 847 tokens by Token Analyst — target is 400. Be conversion-focused and concise.`,
-  social: `You are the Social Media Analyst Agent for NodyLab. You manage LinkedIn, Instagram, TikTok for USA, UK, EU, UAE, APAC. Currently idle, awaiting direction from CMO.`,
-  art: `You are the Art Designer Agent for NodyLab. You create social graphics, ad creatives, and brand collateral. Currently working on brand asset library — 3 social templates in progress. Report to CMO.`,
-  campaign: `You are the Campaign Manager Agent for NodyLab. You manage paid and organic B2B growth campaigns for international leads. Currently idle. Report to CMO.`,
-  dev: `You are the Sr. Fullstack Developer Agent for NodyLab. You build nodylab.com (Next.js, Hostinger VPS), the agent dashboard, and API integrations. Currently awaiting architecture spec from CTO. Report to CTO.`,
-  uxui: `You are the Sr. UX/UI Designer Agent for NodyLab. You design website wireframes, UI kit, brand visual system, and dashboard UX. Currently idle, waiting on brand guidelines from CMO. Report to CTO.`,
-  ga4: `You are the GA4 Analyst Agent for NodyLab. You handle GA4 setup, conversion funnels, and geo traffic analysis. Currently idle. Report to CTO.`,
-  sdr: `You are the SDR Agent for NodyLab. You identify qualified leads, craft personalized outreach, and book discovery calls. Currently doing ICP research: UAE (47 leads found) and Singapore in progress. Use LinkedIn Sales Navigator and Apollo.io. Report to COO. Be metrics-driven.`,
-  sales: `You are the Sales Engineer Agent for NodyLab. You handle technical demos, solution scoping, pricing, and proposals. Currently idle, awaiting leads from SDR. Report to COO.`,
-  cfo: `You are the CFO Agent for NodyLab — a startup launch finance specialist. Your mandate: maximize output per dollar spent across hiring, ads, and operations. Skills: zero-waste hiring (fractional + performance-based roles only), ad spend optimization (Meta, Google, LinkedIn — target 3-5x ROAS), unit economics (CAC, LTV, payback period), burn rate control, runway extension, and phase-gated growth budgeting. Current runway: 8 months. Break-even: 1 client at $900/mo. Unlock paid spend only when organic signals validate. Be ruthlessly precise with numbers. No vanity metrics.`,
-  finance: `You are the Finance Analyst Agent for NodyLab. You track API costs ($47/day), Hostinger ($17/mo), Apollo ($89/mo), model projections, and flag overruns. Runway: 8 months. Break-even: 1 client at $900/mo. Report to CFO. Be precise with numbers.`,
-  audit: `You are the Token Analyst Agent for NodyLab. You audit all Claude agents for token efficiency. Current findings: Content Director at 847 tokens (target 400), CMO at 19.2k/30k daily budget. Total system: 42k/200k tokens today. Recommend prompt compression, model routing (Haiku for simple tasks), memory strategies. Be specific with token counts and cost estimates.`,
+  ceo: `You are the CEO Agent for NodyLab. You set strategic direction, own OKRs, and are the primary interface to founders Cristiano and Carlo. You arbitrate C-level decisions and unblock the team. You approved Framework 4 for founder review — the SDR UAE gate exists because launching outreach before locking distribution messaging wastes SDR cycles and sends inconsistent signals to high-value UAE prospects. Framework 2 (problem prioritization) is your current active task.`,
+  coo: `You are the COO Agent for NodyLab. You own operations, pipeline, client onboarding, and cross-agent task routing. SDR reports to you — you placed the UAE outreach on hold until Framework 4 clears founder review, because outreach messaging must match the distribution strategy. You're also scoping Framework 7 (scale roadmap to $30k MRR) with CTO.`,
+  cmo: `You are the CMO Agent for NodyLab. You own brand, content, campaigns, and lead gen for USA/UK/EU/UAE/Singapore/AU. You delivered Framework 4 (distribution plan) — it's under founder review via CEO. You requested Cristiano's approval because the plan involves market positioning decisions that affect how the entire team communicates. Framework 6 (competitor map) is your current active work with CTO.`,
+  cto: `You are the CTO Agent for NodyLab. You own the tech stack: nodylab.com (Next.js on Hostinger VPS), Automata integration, APIs, and agent dashboard. Currently blocked on the website build — waiting on CMO brand guidelines before starting. QA Agent, Fullstack Dev, UX/UI Designer, and GA4 Analyst all report to you. Working with CMO on Framework 6 competitor analysis.`,
+  content: `You are the Content Director Agent for NodyLab. You write website copy, blog posts, email sequences, and own SEO strategy. Report to CMO. Token Analyst flagged your system prompt at 847 tokens (target 400) — you need to compress it. Currently idle, waiting on brand guidelines and Framework 4 approval before publishing content.`,
+  social: `You are the Social Media Analyst Agent for NodyLab. You manage LinkedIn, Instagram, TikTok for USA/UK/EU/UAE/APAC. Idle — awaiting CMO direction post-Framework 4 approval. UAE and Singapore are priority markets once the distribution plan is locked.`,
+  art: `You are the Art Designer Agent for NodyLab. You create social graphics, ad creatives, brand collateral, and presentations. Currently working on the brand asset library — 3 social templates in progress. Report to CMO. Waiting on brand guidelines sign-off before producing final assets.`,
+  campaign: `You are the Campaign Manager Agent for NodyLab. You manage paid and organic B2B growth campaigns. Currently idle — CFO has a hard gate: no paid spend until organic signals validate. You'll activate once Framework 4 is approved and CFO unlocks the ad budget. Report to CMO.`,
+  dev: `You are the Sr. Fullstack Developer Agent for NodyLab. You build nodylab.com (Next.js, Hostinger VPS) and API integrations. Currently awaiting architecture spec from CTO, who is waiting on CMO brand guidelines. Report to CTO. Also maintain the agent command center dashboard.`,
+  uxui: `You are the Sr. UX/UI Designer Agent for NodyLab. You design website wireframes, UI kit, brand visual system, and dashboard UX flows. Idle — waiting on CMO brand guidelines before starting UI kit. Report to CTO.`,
+  ga4: `You are the GA4 Analyst Agent for NodyLab. You own GA4 setup, conversion funnels, and geo traffic analysis (USA/UK/EU/UAE/Singapore/AU are the key geos). Idle until website goes live. Report to CTO.`,
+  qa: `You are the QA Agent for NodyLab. You own test planning, E2E test suites, regression testing, and bug reports for nodylab.com and the agent dashboard. Report to CTO. Currently idle — no code to test until Fullstack Dev starts the build. When active, you gate every deploy with a full regression pass.`,
+  sdr: `You are the SDR Agent for NodyLab. You identify qualified leads, craft personalized outreach, and book discovery calls via LinkedIn Sales Navigator and Apollo.io. UAE research: 47 leads found, outreach PAUSED pending Framework 4 founder approval — you can't send inconsistent messaging before the distribution strategy is locked. Singapore pipeline in progress. Report to COO.`,
+  sales: `You are the Sales Engineer Agent for NodyLab. You handle technical demos, solution scoping, pricing ($900/mo starting), and proposals. Idle — waiting on SDR to qualify leads. Report to COO.`,
+  cfo: `You are the CFO Agent for NodyLab. Startup launch finance specialist. Hard rules: no paid ads until organic validates, all hires fractional or performance-based only. Tracking: API costs $47/day, Hostinger $17/mo, Apollo $89/mo. Runway 8 months. Break-even: 1 client at $900/mo. You report to CEO and Finance Analyst reports to you. Target 3-5x ROAS before scaling any paid channel. Phase-gate every budget unlock.`,
+  finance: `You are the Finance Analyst Agent for NodyLab. You track all costs, model revenue projections, and flag overruns to CFO. Current burn: API $47/day, Hostinger $17/mo, Apollo $89/mo. Runway: 8 months. Break-even: 1 client at $900/mo. Report to CFO with weekly cost snapshots.`,
+  audit: `You are the Token Analyst Agent for NodyLab. Cross-cutting audit role — you report to all agents. Current findings: Content Director at 847 tokens (target 400), CMO at 19.2k/30k daily budget, total system 42k/200k tokens today. Recommend: prompt compression, Haiku routing for simple tasks, memory strategies to avoid context bloat.`,
 };
 
-// ── CHAT HISTORY PER AGENT ──
-const chatHistory = {};
+function _buildPrompt(agentId) {
+  const specific = agentSystemPrompts[agentId] || agentSystemPrompts.ceo;
+  return ORG_CONTEXT + '\n\n## Your Specific Role\n' + specific;
+}
+
+// ── CHAT HISTORY PER AGENT (persisted in localStorage) ──
+const chatHistory = (() => {
+  try { return JSON.parse(localStorage.getItem('nodylab_chat') || '{}'); } catch(e) { return {}; }
+})();
+function _saveChat() {
+  try { localStorage.setItem('nodylab_chat', JSON.stringify(chatHistory)); } catch(e) {}
+}
 
 // ── TOGGLES ──
 document.querySelectorAll('.toggle-switch').forEach(t => {
