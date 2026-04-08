@@ -899,6 +899,38 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
 }
 .admin-card-title { font-size: 14px; font-weight: 600; color: var(--text); font-family: var(--font-head); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
 .gh-file-tag { font-size: 10px; font-family: var(--font-mono); padding: 3px 8px; border-radius: 4px; background: var(--bg4); border: 1px solid var(--border2); color: var(--text3); transition: all 0.2s; }
+
+/* ── AGENTIC ACTION CHIPS (in chat) ── */
+.agent-action-row { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+.action-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-family: var(--font-mono); border: 1px solid; width: fit-content; cursor: pointer; transition: all 0.15s; }
+.action-chip.task { background: rgba(79,142,247,0.08); border-color: rgba(79,142,247,0.3); color: var(--accent); }
+.action-chip.task:hover { background: rgba(79,142,247,0.15); }
+.action-chip.delegate { background: rgba(34,201,122,0.08); border-color: rgba(34,201,122,0.3); color: var(--green); }
+.action-chip.deliverable { background: rgba(167,139,250,0.08); border-color: rgba(167,139,250,0.3); color: var(--purple); cursor: pointer; }
+.action-chip.deliverable:hover { background: rgba(167,139,250,0.15); }
+.action-chip.decision { background: rgba(245,166,35,0.08); border-color: rgba(245,166,35,0.3); color: var(--amber); }
+.action-chip.delegation-running { background: rgba(34,201,122,0.05); border-color: rgba(34,201,122,0.2); color: var(--text3); font-style: italic; }
+
+/* ── DELIVERABLE DOC VIEWER MODAL ── */
+.ddm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 500; opacity: 0; pointer-events: none; transition: opacity 0.2s; display: flex; align-items: flex-start; justify-content: center; padding: 40px 20px; overflow-y: auto; }
+.ddm-overlay.open { opacity: 1; pointer-events: all; }
+.ddm-card { background: var(--bg1); border: 1px solid var(--border2); border-radius: 16px; width: 100%; max-width: 740px; display: flex; flex-direction: column; max-height: 85vh; }
+.ddm-head { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 12px; flex-shrink: 0; }
+.ddm-agent-av { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.ddm-title { font-size: 16px; font-weight: 600; color: var(--text); font-family: var(--font-head); flex: 1; }
+.ddm-meta { font-size: 10px; color: var(--text3); font-family: var(--font-mono); margin-top: 3px; }
+.ddm-body { flex: 1; overflow-y: auto; padding: 24px; font-size: 13px; color: var(--text2); line-height: 1.75; white-space: pre-wrap; font-family: var(--font-body); }
+.ddm-body::-webkit-scrollbar { width: 4px; }
+.ddm-body::-webkit-scrollbar-thumb { background: var(--bg4); }
+.ddm-body h1,.ddm-body h2,.ddm-body h3 { color: var(--text); font-family: var(--font-head); margin: 16px 0 8px; }
+.ddm-body h1 { font-size: 18px; } .ddm-body h2 { font-size: 15px; } .ddm-body h3 { font-size: 13px; }
+.ddm-body strong { color: var(--text); font-weight: 600; }
+.ddm-body ul,.ddm-body ol { padding-left: 20px; margin: 8px 0; }
+.ddm-body li { margin: 4px 0; }
+.ddm-footer { padding: 14px 24px; border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+.ddm-status { font-size: 10px; font-family: var(--font-mono); margin-left: auto; }
+.ddm-status.approved { color: var(--green); }
+.ddm-status.pending { color: var(--amber); }
 .gh-file-tag.synced { border-color: rgba(34,201,122,0.35); color: var(--green); background: rgba(34,201,122,0.06); }
 .gh-file-tag.error { border-color: rgba(240,92,92,0.35); color: var(--red); background: rgba(240,92,92,0.06); }
 
@@ -1886,6 +1918,27 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
 </div>
 
 <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+
+<!-- ══ DELIVERABLE DOC VIEWER ══ -->
+<div class="ddm-overlay" id="ddm-overlay" onclick="if(event.target===this)closeDeliverableDoc()">
+  <div class="ddm-card">
+    <div class="ddm-head">
+      <div class="ddm-agent-av" id="ddm-avatar"></div>
+      <div style="flex:1;min-width:0;">
+        <div class="ddm-title" id="ddm-title"></div>
+        <div class="ddm-meta" id="ddm-meta"></div>
+      </div>
+      <button onclick="closeDeliverableDoc()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:7px;width:28px;height:28px;color:var(--text2);cursor:pointer;font-size:13px;flex-shrink:0;">✕</button>
+    </div>
+    <div class="ddm-body" id="ddm-body"></div>
+    <div class="ddm-footer">
+      <button class="btn-approve" id="ddm-approve-btn" onclick="approveDeliverableDoc()">✓ Approve</button>
+      <button class="btn-request" onclick="requestDeliverableChanges()">↩ Request changes</button>
+      <button class="btn" style="font-size:11px;background:var(--bg3);border:1px solid var(--border2);padding:5px 12px;border-radius:6px;cursor:pointer;" onclick="exportDeliverable()">⬇ Export .md</button>
+      <span class="ddm-status pending" id="ddm-status">Awaiting approval</span>
+    </div>
+  </div>
+</div>
 <div class="drawer" id="task-drawer">
   <div class="drawer-head">
     <div style="flex:1">
@@ -2237,9 +2290,14 @@ const _dlvIcons = { figma:'🎨', pdf:'📑', html:'🌐', ppt:'📊', doc:'📄
 
 function renderDlvChips(deliverables, compact) {
   if (!deliverables || !deliverables.length) return '';
-  const chips = deliverables.map(d =>
-    `<a class="dlv-chip ${d.type}" href="${d.url||'#'}" target="_blank" onclick="event.stopPropagation()">${_dlvIcons[d.type]||'🔗'} ${d.label}</a>`
-  ).join('');
+  const chips = deliverables.map(d => {
+    if (d.deliverableId) {
+      return `<span class="dlv-chip ${d.type||'doc'}" onclick="event.stopPropagation();openDeliverableDoc('${d.deliverableId}')" style="cursor:pointer;">${_dlvIcons[d.type]||'📄'} ${d.label} <span style="font-size:9px;opacity:0.7;">↗ open</span></span>`;
+    }
+    const href = d.url && d.url !== '#' ? d.url : null;
+    if (href) return `<a class="dlv-chip ${d.type||'link'}" href="${href}" target="_blank" onclick="event.stopPropagation()">${_dlvIcons[d.type]||'🔗'} ${d.label}</a>`;
+    return `<span class="dlv-chip ${d.type||'doc'}" style="opacity:0.6;cursor:default;">${_dlvIcons[d.type]||'📄'} ${d.label}</span>`;
+  }).join('');
   return `<div class="dlv-chips">${chips}</div>`;
 }
 
@@ -2399,7 +2457,9 @@ async function sendMsg() {
 
   setAgentLive(agentId, true);
   try {
-    const models = ['claude-haiku-4-5-20251001', 'claude-3-5-haiku-20241022', 'claude-3-haiku-20240307'];
+    const isCLevel = _CLEVEL_IDS.has(agentId);
+    const models = isCLevel ? _CLEVEL_MODELS : _SPEC_MODELS;
+    const maxTokens = isCLevel ? 1500 : 600;
     let data, lastErr;
     for (const model of models) {
       try {
@@ -2413,7 +2473,7 @@ async function sendMsg() {
           },
           body: JSON.stringify({
             model,
-            max_tokens: 400,
+            max_tokens: maxTokens,
             system: _buildPrompt(agentId),
             messages: chatHistory[agentId],
           }),
@@ -2428,6 +2488,7 @@ async function sendMsg() {
 
     if (data && data.content && data.content[0]) {
       const reply = data.content[0].text;
+      const { cleanText, actions } = _parseDirectives(reply);
       chatHistory[agentId].push({ role: 'assistant', content: reply });
       _saveChat();
       const think = document.getElementById(thinkId);
@@ -2435,12 +2496,14 @@ async function sendMsg() {
         <div class="msg-avatar" style="background:${a.color};">${a.initials}</div>
         <div>
           <div class="msg-tag">${a.name} → you</div>
-          <div class="msg-bubble">${escapeHtml(reply).replace(/\n/g,'<br>')}</div>
+          <div class="msg-bubble">${escapeHtml(cleanText||reply).replace(/\n/g,'<br>')}</div>
           <div class="msg-meta">just now · ${a.name} <span style="color:var(--green);font-size:9px;">· live</span></div>
         </div>
       </div>`;
       msgs.scrollTop = msgs.scrollHeight;
       setAgentLive(agentId, false);
+      // Execute agentic directives (task creation, delegation, deliverables)
+      if (actions.length) await _executeDirectives(actions, agentId, msgs);
       return;
     }
     // All models failed — roll back and show actual error
@@ -2603,25 +2666,125 @@ Decision rights: Founders approve major distribution shifts, paid budgets >$500/
 
 You are a live AI agent. Answer specifically using this context. Never give generic responses. If asked about decisions, explain the actual business reason. Keep replies under 5 sentences unless detail is explicitly requested.`;
 
+// ── MODEL TIERS + AGENTIC FORMAT (must be before agentSystemPrompts) ──
+const _CLEVEL_IDS    = new Set(['ceo','coo','cmo','cto','cfo']);
+const _CLEVEL_MODELS = ['claude-sonnet-4-6','claude-haiku-4-5-20251001','claude-3-5-haiku-20241022'];
+const _SPEC_MODELS   = ['claude-haiku-4-5-20251001','claude-3-5-haiku-20241022','claude-3-haiku-20240307'];
+
+const AGENTIC_FORMAT = `
+
+## AGENTIC OUTPUT FORMAT
+You are a real executive AI agent. When Cristiano (founder) messages you, produce actual work — not commentary about what you "would" do.
+
+Use these markers naturally inside your response prose when applicable:
+- [TASK: Task title | assignee_agent_id | h/m/l] — creates a real board task
+- [DELEGATE: agent_id | Full instruction for that agent to execute now] — triggers that agent immediately
+- [DELIVERABLE: Document title | Full document content — write the complete document here, not a summary] — saves a real doc Cristiano can open and approve
+- [DECISION: Specific question requiring Cristiano's input] — routes to his Inbox
+
+Agent IDs: coo, cmo, cto, cfo, content, social, art, campaign, dev, uxui, ga4, sdr, sales, finance, audit
+
+RULES:
+1. Direct reply to Cristiano: under 120 words — concise, no filler
+2. Substance goes inside [DELIVERABLE: ...] — full content, not an outline
+3. When founder approves something, immediately create tasks and delegate
+4. Reference real numbers: $47/day burn, 8mo runway, Frameworks 1-7, 47 UAE leads, $900/mo break-even
+5. Never say "I would" or "I could" — produce it or explain the blocker`;
+
 // ── AGENT SYSTEM PROMPTS ──
 const agentSystemPrompts = {
-  ceo: `You are the CEO Agent for NodyLab. You set strategic direction, own OKRs, and are the primary interface to founders Cristiano and Carlo. You arbitrate C-level decisions and unblock the team. You approved Framework 4 for founder review — the SDR UAE gate exists because launching outreach before locking distribution messaging wastes SDR cycles and sends inconsistent signals to high-value UAE prospects. Framework 2 (problem prioritization) is your current active task.`,
-  coo: `You are the COO Agent for NodyLab. You own operations, pipeline, client onboarding, and cross-agent task routing. SDR reports to you — you placed the UAE outreach on hold until Framework 4 clears founder review, because outreach messaging must match the distribution strategy. You're also scoping Framework 7 (scale roadmap to $30k MRR) with CTO.`,
-  cmo: `You are the CMO Agent for NodyLab. You own brand, content, campaigns, and lead gen for USA/UK/EU/UAE/Singapore/AU. You delivered Framework 4 (distribution plan) — it's under founder review via CEO. You requested Cristiano's approval because the plan involves market positioning decisions that affect how the entire team communicates. Framework 6 (competitor map) is your current active work with CTO.`,
-  cto: `You are the CTO Agent for NodyLab. You own the tech stack: nodylab.com (Next.js on Hostinger VPS), Automata integration, APIs, and agent dashboard. Currently blocked on the website build — waiting on CMO brand guidelines before starting. QA Agent, Fullstack Dev, UX/UI Designer, and GA4 Analyst all report to you. Working with CMO on Framework 6 competitor analysis.`,
-  content: `You are the Content Director Agent for NodyLab. You write website copy, blog posts, email sequences, and own SEO strategy. Report to CMO. Token Analyst flagged your system prompt at 847 tokens (target 400) — you need to compress it. Currently idle, waiting on brand guidelines and Framework 4 approval before publishing content.`,
-  social: `You are the Social Media Analyst Agent for NodyLab. You manage LinkedIn, Instagram, TikTok for USA/UK/EU/UAE/APAC. Idle — awaiting CMO direction post-Framework 4 approval. UAE and Singapore are priority markets once the distribution plan is locked.`,
-  art: `You are the Art Designer Agent for NodyLab. You create social graphics, ad creatives, brand collateral, and presentations. Currently working on the brand asset library — 3 social templates in progress. Report to CMO. Waiting on brand guidelines sign-off before producing final assets.`,
-  campaign: `You are the Campaign Manager Agent for NodyLab. You manage paid and organic B2B growth campaigns. Currently idle — CFO has a hard gate: no paid spend until organic signals validate. You'll activate once Framework 4 is approved and CFO unlocks the ad budget. Report to CMO.`,
-  dev: `You are the Sr. Fullstack Developer Agent for NodyLab. You build nodylab.com (Next.js, Hostinger VPS) and API integrations. Currently awaiting architecture spec from CTO, who is waiting on CMO brand guidelines. Report to CTO. Also maintain the agent command center dashboard.`,
-  uxui: `You are the Sr. UX/UI Designer Agent for NodyLab. You design website wireframes, UI kit, brand visual system, and dashboard UX flows. Idle — waiting on CMO brand guidelines before starting UI kit. Report to CTO.`,
-  ga4: `You are the GA4 Analyst Agent for NodyLab. You own GA4 setup, conversion funnels, and geo traffic analysis (USA/UK/EU/UAE/Singapore/AU are the key geos). Idle until website goes live. Report to CTO.`,
-  qa: `You are the QA Agent for NodyLab. You own test planning, E2E test suites, regression testing, and bug reports for nodylab.com and the agent dashboard. Report to CTO. Currently idle — no code to test until Fullstack Dev starts the build. When active, you gate every deploy with a full regression pass.`,
-  sdr: `You are the SDR Agent for NodyLab. You identify qualified leads, craft personalized outreach, and book discovery calls via LinkedIn Sales Navigator and Apollo.io. UAE research: 47 leads found, outreach PAUSED pending Framework 4 founder approval — you can't send inconsistent messaging before the distribution strategy is locked. Singapore pipeline in progress. Report to COO.`,
-  sales: `You are the Sales Engineer Agent for NodyLab. You handle technical demos, solution scoping, pricing ($900/mo starting), and proposals. Idle — waiting on SDR to qualify leads. Report to COO.`,
-  cfo: `You are the CFO Agent for NodyLab. Startup launch finance specialist. Hard rules: no paid ads until organic validates, all hires fractional or performance-based only. Tracking: API costs $47/day, Hostinger $17/mo, Apollo $89/mo. Runway 8 months. Break-even: 1 client at $900/mo. You report to CEO and Finance Analyst reports to you. Target 3-5x ROAS before scaling any paid channel. Phase-gate every budget unlock.`,
-  finance: `You are the Finance Analyst Agent for NodyLab. You track all costs, model revenue projections, and flag overruns to CFO. Current burn: API $47/day, Hostinger $17/mo, Apollo $89/mo. Runway: 8 months. Break-even: 1 client at $900/mo. Report to CFO with weekly cost snapshots.`,
-  audit: `You are the Token Analyst Agent for NodyLab. You sit in the Finance dept and report to Finance Analyst. You audit all 17 agents for token efficiency and feed cost data up to CFO. Current findings: Content Director at 847 tokens (target 400), CMO at 19.2k/30k daily budget, total system 42k/200k tokens today. Recommend: prompt compression, Haiku routing for simple tasks, memory strategies to avoid context bloat.`,
+
+ceo: `You are the CEO Agent for NodyLab — a Harvard MBA and former McKinsey Principal who left to build a high-velocity AI automation startup. You are Cristiano's (founder) primary executive interface. You run the company with the precision of a seasoned operator and the speed of a startup founder.
+
+Your mandate: translate founder intent into executed work across all departments. When Cristiano tells you something, your job is to immediately produce output — strategy documents, task assignments, delegations — not to discuss what you "could" do.
+
+Current state:
+- Framework 1 (market breakdown): DONE
+- Framework 2 (problem prioritization): IN PROGRESS — collecting inputs from COO, CMO, CTO
+- Framework 4 (distribution plan): UNDER FOUNDER REVIEW — SDR UAE outreach gated on this
+- Framework 6 (competitor map): IN PROGRESS — CMO + CTO working on Make.com, Zapier, n8n, Relevance AI, Gumloop
+- CTO blocked on website — waiting on brand guidelines
+- 47 UAE leads ready, outreach paused
+
+Decision rights: You approve everything except: paid budget >$500/mo, new market entry, major brand decisions — those go to Cristiano via [DECISION: ...].` + AGENTIC_FORMAT,
+
+coo: `You are the COO Agent for NodyLab — a former Stripe and Notion operator with an MIT Sloan MBA. You own execution: pipeline, operations, client onboarding, cross-agent task routing, and the path to $30k MRR.
+
+Your mandate: when delegated work or asked for operational output, produce complete documents and concrete plans. You don't summarize — you deliver.
+
+Current responsibilities:
+- Framework 7 (scale roadmap to $30k MRR): scoping with CTO — 4 phases, 12 months
+- SDR pipeline: UAE (47 leads, paused), Singapore (in progress)
+- Operations playbook: not yet started
+- Client onboarding: no clients yet — template needed
+
+SDR and Sales Engineer report to you. You unblock them with clear instructions and sequenced playbooks.` + AGENTIC_FORMAT,
+
+cmo: `You are the CMO Agent for NodyLab — a former HubSpot VP and Stanford GSB graduate, inspired by Seth Godin's positioning thinking and the growth playbooks of Notion and Linear. You own brand, content, campaigns, and lead generation across USA, UK, EU, UAE, Singapore, and AU.
+
+Your mandate: produce real marketing assets when asked — actual copy, actual strategy docs, actual content calendars. Not outlines. Not suggestions. Finished drafts.
+
+Current state:
+- Framework 4 (30-day distribution plan): DELIVERED, under founder review. Recommendation: 90% organic / 10% paid. Top channels: LinkedIn outreach, cold email via Apollo, LinkedIn content, Reddit, partner referrals (Phase 2).
+- Framework 6 (competitor map): IN PROGRESS with CTO. Make.com analyzed. Zapier in progress.
+- Framework 5 (viral content engine): QUEUED — starts after F4 approval
+- Brand guidelines: BLOCKED — waiting on founder direction
+
+CMO team: Content Director, Social Analyst, Art Designer, Campaign Manager.` + AGENTIC_FORMAT,
+
+cto: `You are the CTO Agent for NodyLab — a former Google Staff Engineer and MIT Computer Science graduate, with the systems thinking of Werner Vogels and the product engineering sensibility of Stripe's infrastructure team. You own the tech stack, architecture decisions, and technical execution.
+
+Your mandate: produce real technical documents — architecture specs, tech decisions, implementation plans — when asked. Ship, don't describe.
+
+Current state:
+- nodylab.com: BLOCKED — waiting on CMO brand guidelines before Fullstack Dev starts Next.js build
+- Hostinger VPS: provisioned (Node.js 20, PM2, Nginx reverse proxy)
+- Framework 6 (competitor map): IN PROGRESS with CMO
+- Agent dashboard: LIVE at GitHub Pages
+- Stack decision: Next.js + Hostinger VPS (made) — waiting on content/brand to execute
+
+CTO team: Fullstack Dev, UX/UI Designer, GA4 Analyst, QA Agent.` + AGENTIC_FORMAT,
+
+cfo: `You are the CFO Agent for NodyLab — a former Goldman Sachs VP and Wharton MBA, inspired by the capital efficiency playbooks of Basecamp and the unit economics rigor of Stripe's early finance team. You own financial architecture, burn control, and ROAS engineering.
+
+Your mandate: produce real financial models, budget analyses, and hiring cost matrices when asked. Every number must be specific and defensible.
+
+Hard rules (non-negotiable):
+- No paid ad spend until organic channel validates (minimum: 3 booked calls from organic)
+- All hires: fractional or performance-based only
+- Any new spend >$500/mo requires your written approval with ROAS projection
+
+Current numbers:
+- Burn: $47/day API + $17/mo Hostinger + $89/mo Apollo = ~$1,507/mo total
+- Runway: 8 months at current burn
+- Break-even: 1 client at $900/mo
+- Target ROAS: 3-5x before scaling any paid channel
+
+Finance Analyst reports to you. Token Analyst feeds cost data to Finance Analyst.` + AGENTIC_FORMAT,
+
+content: `You are the Content Director Agent for NodyLab — a former Copyhackers-trained conversion copywriter with deep SEO expertise. You write website copy, blog posts, email sequences, and own the content calendar. Report to CMO. Currently idle — waiting on brand guidelines and Framework 4 approval. When activated, your first deliverable is the full nodylab.com website copy.`,
+
+social: `You are the Social Media Analyst Agent for NodyLab. You manage LinkedIn, Instagram, and TikTok for USA/UK/EU/UAE/APAC. Idle — awaiting CMO direction post-Framework 4 approval. UAE and Singapore are priority markets. When asked, produce actual post copy, content calendars, and platform-specific strategies. Report to CMO.`,
+
+art: `You are the Art Designer Agent for NodyLab — a former Apple and Figma-era designer. You create visual identity, social graphics, ad creatives, brand collateral, and presentations. Currently blocked on brand guidelines. When given brand direction, produce detailed design briefs, Figma file specifications, and asset lists. Report to CMO.`,
+
+campaign: `You are the Campaign Manager Agent for NodyLab. You manage paid and organic B2B campaigns. GATED — CFO hard rule: no paid spend until organic validates. When activated, you manage LinkedIn Ads, Google Ads, and Apollo sequences. Produce campaign briefs and attribution frameworks when asked. Report to CMO.`,
+
+dev: `You are the Sr. Fullstack Developer Agent for NodyLab — a former Vercel engineer. You build nodylab.com (Next.js on Hostinger VPS) and all API integrations. Currently BLOCKED on architecture spec from CTO. When unblocked, produce implementation plans, component trees, and deploy checklists. Report to CTO.`,
+
+uxui: `You are the Sr. UX/UI Designer Agent for NodyLab — a former Figma and Linear designer. You design website wireframes, UI kit, brand visual system, and dashboard UX flows. BLOCKED on brand guidelines. When activated, produce Figma file structures, component specs, and user flow maps. Report to CTO.`,
+
+ga4: `You are the GA4 Analyst Agent for NodyLab. You own GA4 setup, conversion funnel configuration, and geo traffic analysis (USA/UK/EU/UAE/Singapore/AU). Idle until website goes live. When activated, produce measurement plans, funnel configs, and weekly analytics reports. Report to CTO.`,
+
+qa: `You are the QA Agent for NodyLab — a former Microsoft SDET. You own test planning, E2E suites (Playwright), regression testing, and bug reports for nodylab.com and the agent dashboard. Idle until code exists. Every deploy is gated by your sign-off. Report to CTO.`,
+
+sdr: `You are the SDR Agent for NodyLab — a former Outreach.io power user. You find qualified leads, write personalized outreach, and book discovery calls via LinkedIn Sales Navigator and Apollo.io. UAE: 47 leads identified, outreach PAUSED — messaging must be locked via Framework 4 before you send a single message. Singapore pipeline in progress. When activated, produce lead lists, outreach sequences, and booking reports. Report to COO.`,
+
+sales: `You are the Sales Engineer Agent for NodyLab. You handle technical demos, solution scoping, pricing ($900/mo starting), and proposal writing. Idle — waiting on SDR to qualify leads. When prospects arrive, produce demo scripts, solution specs, and tailored proposals. Report to COO.`,
+
+finance: `You are the Finance Analyst Agent for NodyLab. You track all costs, model revenue projections, and flag overruns to CFO. Burn: $47/day API + $17/mo Hostinger + $89/mo Apollo. Runway: 8 months. Break-even: 1 client at $900/mo. Produce weekly cost snapshots and monthly financial summaries. Report to CFO.`,
+
+audit: `You are the Token Analyst Agent for NodyLab. You audit all 17 agents for token efficiency and feed cost data to Finance Analyst → CFO. Findings: Content Director at 847 tokens (target 400), CMO at 19.2k/30k daily, total system 42k/200k today. Produce compression recommendations, model routing matrices, and weekly token reports. Report to Finance Analyst.`,
 };
 
 function _buildPrompt(agentId) {
@@ -3650,8 +3813,12 @@ function approveInboxItem(id) {
   if (!item) return;
   item.status = 'approved';
   _saveInbox();
-  renderInbox();
-  // If tied to a board task, move it
+  // If tied to a deliverable, mark it approved
+  if (item.deliverableId && _deliverableStore[item.deliverableId]) {
+    _deliverableStore[item.deliverableId].status = 'approved';
+    _saveDeliverables();
+  }
+  // If tied to a board task, move it to done
   if (item.taskId) {
     const allCols = ['backlog','progress','review','done'];
     for (const col of allCols) {
@@ -3660,11 +3827,13 @@ function approveInboxItem(id) {
         const task = taskData[col].splice(idx, 1)[0];
         task.requiresApproval = false;
         taskData.done.push(task);
-        renderBoard();
+        if (window._currentView === 'board') renderBoard();
         break;
       }
     }
   }
+  _updateInboxBadge();
+  renderInbox();
 }
 
 function requestInboxChanges(id) {
@@ -3704,6 +3873,330 @@ function addDeliverablePrompt(taskId) {
   }
   renderBoard();
   openDrawer(taskId);
+}
+
+// ══════════════════════════════════════════════════════
+// AGENTIC ENGINE — real task creation, delegation, docs
+// ══════════════════════════════════════════════════════
+
+// Deliverable store: id → {id,title,content,agentId,agentName,agentColor,agentInitials,timestamp,status}
+const _deliverableStore = (() => {
+  try { return JSON.parse(localStorage.getItem('nodylab_deliverables') || '{}'); } catch(e) { return {}; }
+})();
+function _saveDeliverables() {
+  try { localStorage.setItem('nodylab_deliverables', JSON.stringify(_deliverableStore)); } catch(e) {}
+}
+
+// Parse a reply for agentic directives. Returns {cleanText, actions[]}
+function _parseDirectives(reply) {
+  const actions = [];
+  let clean = reply;
+
+  // Extract all markers (greedy content between brackets, multiline)
+  const rx = /\[(TASK|DELEGATE|DELIVERABLE|DECISION):([^\]]+(?:\][^\[]*\[)*[^\]]*)\]/gs;
+  const matches = [...reply.matchAll(rx)];
+
+  for (const m of matches) {
+    const type = m[1];
+    const body = m[2].trim();
+    const parts = body.split('|').map(s => s.trim());
+    actions.push({ type, parts, raw: m[0] });
+    clean = clean.replace(m[0], '').trim();
+  }
+  // Also handle multiline DELIVERABLE: content can have newlines
+  // Secondary pass for [DELIVERABLE: title | multi\nline\ncontent]
+  clean = clean.replace(/\n{3,}/g, '\n\n').trim();
+  return { cleanText: clean, actions };
+}
+
+// Execute parsed directives
+async function _executeDirectives(actions, fromAgentId, chatMsgsEl) {
+  const fromAgent = agentData.find(a => a.id === fromAgentId) || {};
+  const apiKey = localStorage.getItem('nodylab_api_key');
+
+  for (const action of actions) {
+    if (action.type === 'TASK') {
+      const [title, ownerId, priority] = action.parts;
+      _createAgentTask(title, ownerId, priority, fromAgentId);
+      _appendActionChip(chatMsgsEl, 'task', `📋 Task created: ${title}`);
+    }
+
+    if (action.type === 'DECISION') {
+      const question = action.parts[0];
+      _founderInbox.unshift({
+        id: 'inb-' + Date.now(),
+        taskId: null, status: 'pending', urgent: true,
+        from: fromAgent.name || fromAgentId,
+        fromInitials: fromAgent.initials || '?',
+        fromColor: fromAgent.color || 'var(--bg4)',
+        tag: 'Decision', tagColor: '#f5a623', tagBg: 'rgba(245,166,35,0.1)',
+        title: question,
+        body: `${fromAgent.name || fromAgentId} needs your decision to proceed.`,
+        deliverables: [],
+        time: _nowLabel(),
+      });
+      _saveInbox();
+      _updateInboxBadge();
+      _appendActionChip(chatMsgsEl, 'decision', `⚠ Decision needed: ${question.slice(0,60)}${question.length>60?'…':''}`);
+    }
+
+    if (action.type === 'DELIVERABLE') {
+      const title = action.parts[0];
+      const content = action.parts.slice(1).join(' | ');
+      const id = 'dlv-' + Date.now() + '-' + Math.random().toString(36).slice(2,6);
+      _deliverableStore[id] = {
+        id, title, content,
+        agentId: fromAgentId,
+        agentName: fromAgent.name || fromAgentId,
+        agentColor: fromAgent.color || 'var(--bg4)',
+        agentInitials: fromAgent.initials || '?',
+        timestamp: _nowLabel(),
+        status: 'pending',
+      };
+      _saveDeliverables();
+      // Add to inbox
+      _founderInbox.unshift({
+        id: 'inb-dlv-' + id,
+        taskId: null, status: 'pending', urgent: true,
+        from: fromAgent.name || fromAgentId,
+        fromInitials: fromAgent.initials || '?',
+        fromColor: fromAgent.color || 'var(--bg4)',
+        tag: 'Deliverable', tagColor: '#a78bfa', tagBg: 'rgba(167,139,250,0.1)',
+        title: title,
+        body: `${fromAgent.name} produced a document ready for your review and approval.`,
+        deliverables: [{ type:'doc', label: title, url:'#', deliverableId: id }],
+        time: _nowLabel(),
+        deliverableId: id,
+      });
+      _saveInbox();
+      _updateInboxBadge();
+      _appendActionChip(chatMsgsEl, 'deliverable', `📄 ${title}`, () => openDeliverableDoc(id));
+    }
+
+    if (action.type === 'DELEGATE' && apiKey) {
+      const toId = action.parts[0];
+      const instruction = action.parts.slice(1).join(' | ');
+      const toAgent = agentData.find(a => a.id === toId);
+      if (toAgent) {
+        const chipEl = _appendActionChip(chatMsgsEl, 'delegation-running',
+          `↗ Delegating to ${toAgent.name}…`);
+        // Run async so we don't block
+        _runDelegation(toId, instruction, fromAgentId, chipEl);
+      }
+    }
+  }
+}
+
+function _appendActionChip(container, cls, label, onclick) {
+  if (!container) return null;
+  let row = container.querySelector('.agent-action-row');
+  if (!row) {
+    // Attach to last agent message
+    const msgs = container.querySelectorAll('.msg.agent');
+    const last = msgs[msgs.length - 1];
+    if (!last) return null;
+    const bubble = last.querySelector('.msg-bubble');
+    if (!bubble) return null;
+    row = document.createElement('div');
+    row.className = 'agent-action-row';
+    bubble.after(row);
+  }
+  const chip = document.createElement('div');
+  chip.className = `action-chip ${cls}`;
+  chip.textContent = label;
+  if (onclick) chip.addEventListener('click', onclick);
+  row.appendChild(chip);
+  container.scrollTop = container.scrollHeight;
+  return chip;
+}
+
+async function _runDelegation(toId, instruction, fromId, chipEl) {
+  const apiKey = localStorage.getItem('nodylab_api_key');
+  if (!apiKey) return;
+  const toAgent = agentData.find(a => a.id === toId);
+  if (!toAgent) return;
+  const fromAgent = agentData.find(a => a.id === fromId) || {};
+
+  setAgentLive(toId, true);
+  const models = _CLEVEL_IDS.has(toId) ? _CLEVEL_MODELS : _SPEC_MODELS;
+  const systemPrompt = _buildPrompt(toId);
+  const userMsg = `${instruction}\n\nContext: This task was delegated to you by ${fromAgent.name||fromId}. Produce your full output now using the AGENTIC OUTPUT FORMAT — include [DELIVERABLE: ...] with complete document content if applicable.`;
+
+  let data, lastErr;
+  for (const model of models) {
+    try {
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model, max_tokens: 1500,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: userMsg }],
+        }),
+      });
+      data = await resp.json();
+      if (data.content && data.content[0]) break;
+      lastErr = data.error?.message || 'unknown';
+      if (!lastErr.toLowerCase().includes('model')) break;
+    } catch(e) { lastErr = e.message; break; }
+  }
+
+  setAgentLive(toId, false);
+
+  if (!data?.content?.[0]) {
+    if (chipEl) chipEl.textContent = `✗ ${toAgent.name} unavailable: ${lastErr}`;
+    return;
+  }
+
+  const reply = data.content[0].text;
+  const { cleanText, actions } = _parseDirectives(reply);
+
+  // Update chip
+  if (chipEl) {
+    chipEl.className = 'action-chip delegate';
+    chipEl.textContent = `✓ ${toAgent.name} responded`;
+  }
+
+  // Save to that agent's chat history
+  if (!chatHistory[toId]) chatHistory[toId] = [];
+  chatHistory[toId].push({ role: 'user', content: instruction });
+  chatHistory[toId].push({ role: 'assistant', content: reply });
+  _saveChat();
+
+  // Add inline result in the current chat
+  const msgs = document.getElementById('chat-msgs');
+  if (msgs) {
+    msgs.innerHTML += `<div class="msg agent" style="opacity:0.9;">
+      <div class="msg-avatar" style="background:${toAgent.color};">${toAgent.initials}</div>
+      <div>
+        <div class="msg-tag">${toAgent.name} → via delegation</div>
+        <div class="msg-bubble">${escapeHtml(cleanText||'(see deliverables below)').replace(/\n/g,'<br>')}</div>
+        <div class="msg-meta">${_nowLabel()} · ${toAgent.name} <span style="color:var(--green);font-size:9px;">· delegated</span></div>
+      </div>
+    </div>`;
+    msgs.scrollTop = msgs.scrollHeight;
+    // Execute any directives from the delegated agent
+    await _executeDirectives(actions, toId, msgs);
+  }
+}
+
+function _createAgentTask(title, ownerId, priority, fromId) {
+  const owner = agentData.find(a => a.id === ownerId);
+  const fromAgent = agentData.find(a => a.id === fromId);
+  const colors = { h:'rgba(240,92,92,0.15)', m:'rgba(245,166,35,0.15)', l:'rgba(34,201,122,0.15)' };
+  const textColors = { h:'#f05c5c', m:'#f5a623', l:'#22c97a' };
+  const newTask = {
+    id: 'at-' + Date.now(),
+    title,
+    desc: `Assigned by ${fromAgent?.name||fromId}`,
+    tag: 'Agent Task',
+    tagColor: colors[priority] || colors.m,
+    tagTextColor: textColors[priority] || textColors.m,
+    owner: owner?.name?.replace(' Agent','') || ownerId,
+    ownerColor: owner?.color || 'var(--bg4)',
+    ownerInitials: owner?.initials || '?',
+    priority: priority || 'm',
+    deliverables: [],
+    requiresApproval: false,
+  };
+  taskData.backlog.unshift(newTask);
+  if (window._currentView === 'board') renderBoard();
+}
+
+function _nowLabel() {
+  const d = new Date();
+  return `${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})} · ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+}
+
+// Deliverable doc viewer
+let _currentDocId = null;
+function openDeliverableDoc(id) {
+  const doc = _deliverableStore[id];
+  if (!doc) return;
+  _currentDocId = id;
+  const av = document.getElementById('ddm-avatar');
+  av.style.background = doc.agentColor;
+  av.textContent = doc.agentInitials;
+  document.getElementById('ddm-title').textContent = doc.title;
+  document.getElementById('ddm-meta').textContent = `${doc.agentName} · ${doc.timestamp}`;
+  // Render markdown-ish content
+  const body = document.getElementById('ddm-body');
+  body.innerHTML = _renderMarkdown(doc.content);
+  const statusEl = document.getElementById('ddm-status');
+  const approveBtn = document.getElementById('ddm-approve-btn');
+  if (doc.status === 'approved') {
+    statusEl.textContent = '✓ Approved';
+    statusEl.className = 'ddm-status approved';
+    approveBtn.style.display = 'none';
+  } else if (doc.status === 'changes-requested') {
+    statusEl.textContent = '↩ Changes requested';
+    statusEl.className = 'ddm-status';
+    statusEl.style.color = 'var(--text3)';
+    approveBtn.style.display = '';
+  } else {
+    statusEl.textContent = 'Awaiting your approval';
+    statusEl.className = 'ddm-status pending';
+    approveBtn.style.display = '';
+  }
+  document.getElementById('ddm-overlay').classList.add('open');
+}
+
+function closeDeliverableDoc() {
+  document.getElementById('ddm-overlay').classList.remove('open');
+  _currentDocId = null;
+}
+
+function approveDeliverableDoc() {
+  if (!_currentDocId) return;
+  _deliverableStore[_currentDocId].status = 'approved';
+  _saveDeliverables();
+  // Update inbox item
+  const inbItem = _founderInbox.find(i => i.deliverableId === _currentDocId);
+  if (inbItem) { inbItem.status = 'approved'; _saveInbox(); }
+  document.getElementById('ddm-status').textContent = '✓ Approved';
+  document.getElementById('ddm-status').className = 'ddm-status approved';
+  document.getElementById('ddm-approve-btn').style.display = 'none';
+  _updateInboxBadge();
+  if (window._currentView === 'inbox') renderInbox();
+  setTimeout(closeDeliverableDoc, 800);
+}
+
+function requestDeliverableChanges() {
+  if (!_currentDocId) return;
+  _deliverableStore[_currentDocId].status = 'changes-requested';
+  _saveDeliverables();
+  const inbItem = _founderInbox.find(i => i.deliverableId === _currentDocId);
+  if (inbItem) { inbItem.status = 'changes-requested'; _saveInbox(); }
+  if (window._currentView === 'inbox') renderInbox();
+  closeDeliverableDoc();
+}
+
+function exportDeliverable() {
+  if (!_currentDocId) return;
+  const doc = _deliverableStore[_currentDocId];
+  if (!doc) return;
+  const blob = new Blob([doc.content], { type: 'text/markdown' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = doc.title.replace(/[^a-z0-9]/gi,'_').toLowerCase() + '.md';
+  a.click();
+}
+
+function _renderMarkdown(text) {
+  return escapeHtml(text)
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, s => `<ul>${s}</ul>`)
+    .replace(/\n\n/g, '<br><br>')
+    .replace(/\n/g, '<br>');
 }
 
 // ── LIVE ACTIVITY FEED AUTO-UPDATE ──
