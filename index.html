@@ -1920,13 +1920,7 @@ function renderAgentList() {
 }
 
 // ── CHAT ──
-const agentReplies = {
-  ceo: ["Understood. I'll incorporate this into the weekly board summary and route the relevant subtask to the appropriate agent immediately.", "Noted. This raises a flag — I'm escalating to founders based on escalation rule #2 (new market entry). Stand by.", "Good context. Updating OKRs to reflect this. CMO will be briefed in the next cycle.", "Acknowledged. Delegating to COO for operational execution. You'll receive a status update by EOD."],
-  cmo: ["On it. I'll deliver the full content matrix by end of this sprint cycle, prioritizing the UAE and Singapore angle.", "Running a competitor analysis now. Preliminary findings in 30 minutes.", "Hook bank is being drafted. All 10 hooks will carry emotional trigger labels as specified."],
-  cto: ["Architecture spec is 60% complete. Flagging a dependency: need the brand guidelines from CMO before finalizing the website component structure.", "Automata API integration map is ready for review. No blockers on the tech side.", "Recommending we use Next.js for the website — SSR for SEO, deploys clean on Hostinger VPS."],
-  sdr: ["ICP research for UAE complete: 47 decision-makers identified on LinkedIn. Starting personalized outreach sequence tonight.", "Cold email v1 drafted for the 'pilot-to-production' positioning. Awaiting CMO approval before sending.", "3 LinkedIn connection requests sent to Singapore prospects. Engagement tracking initialized."],
-  audit: ["Alert: Content Director prompt is 847 tokens — 41% above target. Recommending trim to 400 tokens. Estimated savings: $0.003/call → $2.19/day at current call volume.", "Model routing recommendation: SDR's ICP research task can be handled by claude-haiku-4-5 instead of Sonnet. Projected 78% cost reduction for this task type.", "Weekly audit: Total system efficiency at 79%. Top 3 optimization targets attached."],
-};
+// No canned replies — agents only respond via live API.
 
 function selectAgent(id, el) {
   document.querySelectorAll('.alp-item').forEach(i => i.classList.remove('selected'));
@@ -2017,54 +2011,60 @@ async function sendMsg() {
   </div>`;
   msgs.scrollTop = msgs.scrollHeight;
 
+  const apiKey = localStorage.getItem('nodylab_api_key');
+
+  if (!apiKey) {
+    // No key — show prompt, do NOT save to history (no real reply to pair with)
+    setTimeout(() => fallbackReply(thinkId, a, agentId, false), 300);
+    return;
+  }
+
   if (!chatHistory[agentId]) chatHistory[agentId] = [];
   chatHistory[agentId].push({ role: 'user', content: text });
   _saveChat();
 
-  const apiKey = localStorage.getItem('nodylab_api_key');
-  if (apiKey) {
-    setAgentLive(agentId, true);
-    try {
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: {
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'content-type': 'application/json',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 400,
-          system: _buildPrompt(agentId),
-          messages: chatHistory[agentId],
-        }),
-      });
-      const data = await resp.json();
-      if (data.content && data.content[0]) {
-        const reply = data.content[0].text;
-        chatHistory[agentId].push({ role: 'assistant', content: reply });
-        _saveChat();
-        const think = document.getElementById(thinkId);
-        if (think) think.outerHTML = `<div class="msg agent">
-          <div class="msg-avatar" style="background:${a.color};">${a.initials}</div>
-          <div>
-            <div class="msg-tag">${a.name} → you</div>
-            <div class="msg-bubble">${escapeHtml(reply).replace(/\n/g,'<br>')}</div>
-            <div class="msg-meta">just now · ${a.name} <span style="color:var(--green);font-size:9px;">· live</span></div>
-          </div>
-        </div>`;
-        msgs.scrollTop = msgs.scrollHeight;
-        setAgentLive(agentId, false);
-        return;
-      }
-      throw new Error('empty');
-    } catch(err) {
+  setAgentLive(agentId, true);
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 400,
+        system: _buildPrompt(agentId),
+        messages: chatHistory[agentId],
+      }),
+    });
+    const data = await resp.json();
+    if (data.content && data.content[0]) {
+      const reply = data.content[0].text;
+      chatHistory[agentId].push({ role: 'assistant', content: reply });
+      _saveChat();
+      const think = document.getElementById(thinkId);
+      if (think) think.outerHTML = `<div class="msg agent">
+        <div class="msg-avatar" style="background:${a.color};">${a.initials}</div>
+        <div>
+          <div class="msg-tag">${a.name} → you</div>
+          <div class="msg-bubble">${escapeHtml(reply).replace(/\n/g,'<br>')}</div>
+          <div class="msg-meta">just now · ${a.name} <span style="color:var(--green);font-size:9px;">· live</span></div>
+        </div>
+      </div>`;
+      msgs.scrollTop = msgs.scrollHeight;
       setAgentLive(agentId, false);
-      fallbackReply(thinkId, a, agentId);
+      return;
     }
-  } else {
-    setTimeout(() => fallbackReply(thinkId, a, agentId), 1200 + Math.random() * 800);
+    throw new Error('empty');
+  } catch(err) {
+    // Roll back the user message so history stays clean
+    chatHistory[agentId].pop();
+    _saveChat();
+    setAgentLive(agentId, false);
+    fallbackReply(thinkId, a, agentId, true);
   }
 }
 
@@ -2083,18 +2083,17 @@ function saveApiKey(val) {
   if (s) { s.textContent = val.trim() ? '✓ saved' : 'not set'; s.style.color = val.trim() ? 'var(--green)' : 'var(--text3)'; }
 }
 
-function fallbackReply(thinkId, a, agentId) {
-  const replies = agentReplies[agentId] || agentReplies.ceo;
-  const reply = replies[Math.floor(Math.random() * replies.length)];
+function fallbackReply(thinkId, a, agentId, isError) {
   const msgs = document.getElementById('chat-msgs');
   const think = document.getElementById(thinkId);
-  const apiKey = localStorage.getItem('nodylab_api_key');
+  const label = isError ? 'API error — check key or try again' : 'Add your Anthropic API key in Admin to chat live';
   if (think) think.outerHTML = `<div class="msg agent">
-    <div class="msg-avatar" style="background:${a.color};">${a.initials}</div>
+    <div class="msg-avatar" style="background:${a.color};opacity:0.5;">${a.initials}</div>
     <div>
-      <div class="msg-tag">${a.name} → you</div>
-      <div class="msg-bubble">${reply}</div>
-      <div class="msg-meta">just now · ${a.name}${!apiKey ? ' <span style="color:var(--text3);font-size:9px;">· set API key in Admin for live</span>' : ''}</div>
+      <div class="msg-tag" style="color:var(--text3);">${a.name} · offline</div>
+      <div class="msg-bubble" style="color:var(--text2);border-color:rgba(255,255,255,0.04);">
+        <span style="color:var(--text3);font-size:11px;">⚠ ${label}</span>
+      </div>
     </div>
   </div>`;
   if (msgs) msgs.scrollTop = msgs.scrollHeight;
