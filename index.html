@@ -2554,21 +2554,34 @@ Rules: Be direct and specific. Include the agent's current status and active tas
   btn.textContent = '⟳ Generating...';
   ta.value = '';
 
-  try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({ model: 'claude-3-5-haiku-20241022', max_tokens: 300, messages: [{ role: 'user', content: userMsg }] }),
-    });
-    const data = await resp.json();
-    if (data.content && data.content[0]) {
-      ta.value = data.content[0].text.trim();
-    } else {
-      ta.value = '⚠ Generation failed: ' + ((data.error && data.error.message) || 'unknown error');
+  const models = ['claude-haiku-4-5-20251001', 'claude-3-5-haiku-20241022', 'claude-3-haiku-20240307'];
+  let generated = false;
+
+  for (const model of models) {
+    try {
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'content-type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true' },
+        body: JSON.stringify({ model, max_tokens: 300, messages: [{ role: 'user', content: userMsg }] }),
+      });
+      const data = await resp.json();
+      if (data.content && data.content[0]) {
+        ta.value = data.content[0].text.trim();
+        generated = true;
+        break;
+      }
+      if (data.error && data.error.type === 'not_found_error') continue; // try next model
+      ta.value = '⚠ ' + (data.error ? data.error.message : 'Generation failed');
+      generated = true;
+      break;
+    } catch(e) {
+      ta.value = '⚠ Error: ' + e.message;
+      generated = true;
+      break;
     }
-  } catch(e) {
-    ta.value = '⚠ Error: ' + e.message;
   }
+
+  if (!generated) ta.value = '⚠ No available model found. Check your API key or account tier.';
 
   btn.disabled = false;
   btn.textContent = '✦ Generate with AI';
