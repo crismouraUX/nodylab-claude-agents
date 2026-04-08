@@ -2025,23 +2025,34 @@ async function sendMsg() {
 
   setAgentLive(agentId, true);
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 400,
-        system: _buildPrompt(agentId),
-        messages: chatHistory[agentId],
-      }),
-    });
-    const data = await resp.json();
-    if (data.content && data.content[0]) {
+    const models = ['claude-haiku-4-5-20251001', 'claude-3-5-haiku-20241022', 'claude-3-haiku-20240307'];
+    let data, lastErr;
+    for (const model of models) {
+      try {
+        const resp = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'content-type': 'application/json',
+            'anthropic-dangerous-direct-browser-access': 'true',
+          },
+          body: JSON.stringify({
+            model,
+            max_tokens: 400,
+            system: _buildPrompt(agentId),
+            messages: chatHistory[agentId],
+          }),
+        });
+        data = await resp.json();
+        if (data.content && data.content[0]) break; // success
+        // API returned an error object — check if it's a model issue, else stop
+        lastErr = (data.error && data.error.message) || 'unknown error';
+        if (!lastErr.toLowerCase().includes('model')) break; // not a model issue, don't retry
+      } catch(e) { lastErr = e.message; break; }
+    }
+
+    if (data && data.content && data.content[0]) {
       const reply = data.content[0].text;
       chatHistory[agentId].push({ role: 'assistant', content: reply });
       _saveChat();
@@ -2058,13 +2069,16 @@ async function sendMsg() {
       setAgentLive(agentId, false);
       return;
     }
-    throw new Error('empty');
-  } catch(err) {
-    // Roll back the user message so history stays clean
+    // All models failed — roll back and show actual error
     chatHistory[agentId].pop();
     _saveChat();
     setAgentLive(agentId, false);
-    fallbackReply(thinkId, a, agentId, true);
+    fallbackReply(thinkId, a, agentId, lastErr || 'API error');
+  } catch(err) {
+    chatHistory[agentId].pop();
+    _saveChat();
+    setAgentLive(agentId, false);
+    fallbackReply(thinkId, a, agentId, err.message);
   }
 }
 
@@ -2083,16 +2097,19 @@ function saveApiKey(val) {
   if (s) { s.textContent = val.trim() ? '✓ saved' : 'not set'; s.style.color = val.trim() ? 'var(--green)' : 'var(--text3)'; }
 }
 
-function fallbackReply(thinkId, a, agentId, isError) {
+function fallbackReply(thinkId, a, agentId, errMsg) {
   const msgs = document.getElementById('chat-msgs');
   const think = document.getElementById(thinkId);
-  const label = isError ? 'API error — check key or try again' : 'Add your Anthropic API key in Admin to chat live';
+  const noKey = !errMsg;
+  const label = noKey
+    ? 'Add your Anthropic API key in Admin to chat live'
+    : 'API error: ' + (typeof errMsg === 'string' ? errMsg : 'check key or try again');
   if (think) think.outerHTML = `<div class="msg agent">
     <div class="msg-avatar" style="background:${a.color};opacity:0.5;">${a.initials}</div>
     <div>
       <div class="msg-tag" style="color:var(--text3);">${a.name} · offline</div>
       <div class="msg-bubble" style="color:var(--text2);border-color:rgba(255,255,255,0.04);">
-        <span style="color:var(--text3);font-size:11px;">⚠ ${label}</span>
+        <span style="color:var(--text3);font-size:11px;">⚠ ${escapeHtml(label)}</span>
       </div>
     </div>
   </div>`;
