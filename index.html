@@ -901,6 +901,53 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
 .gh-file-tag { font-size: 10px; font-family: var(--font-mono); padding: 3px 8px; border-radius: 4px; background: var(--bg4); border: 1px solid var(--border2); color: var(--text3); transition: all 0.2s; }
 .gh-file-tag.synced { border-color: rgba(34,201,122,0.35); color: var(--green); background: rgba(34,201,122,0.06); }
 .gh-file-tag.error { border-color: rgba(240,92,92,0.35); color: var(--red); background: rgba(240,92,92,0.06); }
+
+/* ── DELIVERABLE CHIPS ── */
+.dlv-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.dlv-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 5px; font-size: 10px; font-family: var(--font-mono); border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); cursor: pointer; text-decoration: none; transition: all 0.15s; white-space: nowrap; }
+.dlv-chip:hover { border-color: var(--accent); color: var(--accent); background: rgba(79,142,247,0.06); }
+.dlv-chip.figma { border-color: rgba(167,139,250,0.3); color: var(--purple); }
+.dlv-chip.figma:hover { background: rgba(167,139,250,0.08); }
+.dlv-chip.pdf { border-color: rgba(240,92,92,0.3); color: var(--red); }
+.dlv-chip.pdf:hover { background: rgba(240,92,92,0.08); }
+.dlv-chip.notion { border-color: rgba(255,255,255,0.15); color: var(--text); }
+.dlv-chip.gdrive { border-color: rgba(34,201,122,0.3); color: var(--green); }
+.dlv-chip.ppt { border-color: rgba(245,166,35,0.3); color: var(--amber); }
+.dlv-chip.html { border-color: rgba(45,212,191,0.3); color: var(--teal); }
+.dlv-chip-add { border-style: dashed; color: var(--text3); cursor: pointer; }
+.dlv-chip-add:hover { color: var(--accent); border-color: var(--accent); background: rgba(79,142,247,0.06); }
+
+/* ── APPROVAL BANNER (drawer) ── */
+.approval-banner { margin: 0 0 0 0; padding: 12px 16px; background: rgba(245,166,35,0.08); border: 1px solid rgba(245,166,35,0.25); border-radius: 8px; display: flex; align-items: flex-start; gap: 10px; }
+.approval-banner-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.approval-banner-text { flex: 1; }
+.approval-banner-title { font-size: 12px; font-weight: 600; color: var(--amber); margin-bottom: 3px; }
+.approval-banner-sub { font-size: 11px; color: var(--text3); line-height: 1.5; }
+.approval-actions { display: flex; gap: 8px; margin-top: 10px; }
+.btn-approve { padding: 5px 14px; border-radius: 6px; font-size: 11px; font-family: var(--font-mono); background: rgba(34,201,122,0.12); border: 1px solid rgba(34,201,122,0.35); color: var(--green); cursor: pointer; transition: all 0.15s; }
+.btn-approve:hover { background: rgba(34,201,122,0.22); }
+.btn-request { padding: 5px 14px; border-radius: 6px; font-size: 11px; font-family: var(--font-mono); background: rgba(240,92,92,0.08); border: 1px solid rgba(240,92,92,0.3); color: var(--red); cursor: pointer; transition: all 0.15s; }
+.btn-request:hover { background: rgba(240,92,92,0.18); }
+
+/* ── INBOX VIEW ── */
+.inbox-list { display: flex; flex-direction: column; gap: 12px; }
+.inbox-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color 0.15s; }
+.inbox-card:hover { border-color: var(--border2); }
+.inbox-card.urgent { border-color: rgba(245,166,35,0.3); }
+.inbox-card-head { padding: 14px 16px 10px; display: flex; align-items: flex-start; gap: 10px; }
+.inbox-agent-av { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.inbox-card-info { flex: 1; }
+.inbox-card-from { font-size: 10px; color: var(--text3); font-family: var(--font-mono); margin-bottom: 2px; }
+.inbox-card-title { font-size: 13px; font-weight: 600; color: var(--text); font-family: var(--font-head); }
+.inbox-card-tag { font-size: 10px; padding: 2px 7px; border-radius: 4px; font-family: var(--font-mono); margin-left: auto; align-self: flex-start; flex-shrink: 0; }
+.inbox-card-body { padding: 0 16px 12px; font-size: 12px; color: var(--text2); line-height: 1.6; }
+.inbox-card-dlv { padding: 10px 16px; background: var(--bg3); border-top: 1px solid var(--border); }
+.inbox-card-dlv-label { font-size: 9px; font-family: var(--font-mono); color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+.inbox-card-footer { padding: 10px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: center; }
+.inbox-time { font-size: 10px; color: var(--text3); font-family: var(--font-mono); margin-left: auto; }
+.inbox-empty { text-align: center; padding: 60px 20px; color: var(--text3); font-size: 13px; }
+.inbox-empty-icon { font-size: 32px; margin-bottom: 10px; opacity: 0.4; }
+.inbox-badge { background: rgba(245,166,35,0.15); border: 1px solid rgba(245,166,35,0.3); color: var(--amber); }
 .admin-row {
   display: flex;
   align-items: center;
@@ -1146,6 +1193,10 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
       <div class="nav-item" onclick="showView('comms',this)">
         <span class="nav-icon">◎</span> Agent Chat
         <span class="nav-badge active-b">3</span>
+      </div>
+      <div class="nav-item" id="nav-inbox" onclick="showView('inbox',this)">
+        <span class="nav-icon">📬</span> Inbox
+        <span class="nav-badge inbox-badge" id="inbox-badge">3</span>
       </div>
       <div class="nav-item" onclick="showView('office',this)">
         <span class="nav-icon">⊞</span> Agents Office
@@ -1587,6 +1638,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
               <button class="vmt-btn active" id="gl-tab-guidelines" onclick="switchGlTab('guidelines')" style="font-size:11px;">📋 Guidelines</button>
               <button class="vmt-btn" id="gl-tab-skills" onclick="switchGlTab('skills')" style="font-size:11px;">⚡ Skills</button>
               <button class="vmt-btn" id="gl-tab-mcp" onclick="switchGlTab('mcp')" style="font-size:11px;">🔌 MCP Config</button>
+              <button class="vmt-btn" id="gl-tab-brand" onclick="switchGlTab('brand')" style="font-size:11px;">🎨 Brand</button>
             </div>
             <div id="gl-panel-guidelines">
               <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-bottom:6px;">CLAUDE.md / global-guidelines.md — injected into all agent prompts</div>
@@ -1604,6 +1656,44 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
             <div id="gl-panel-mcp" style="display:none;">
               <div style="font-size:10px;color:var(--text3);font-family:var(--font-mono);margin-bottom:6px;">MCP server config — tool connections for all agents</div>
               <textarea id="gl-mcp-ta" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:12px;font-size:12px;color:var(--text);font-family:var(--font-mono);line-height:1.6;resize:vertical;min-height:140px;outline:none;" placeholder='{\n  "mcpServers": {\n    "notion": { "command": "npx", "args": ["@modelcontextprotocol/server-notion"] },\n    "slack": { "command": "npx", "args": ["@modelcontextprotocol/server-slack"] }\n  }\n}'></textarea>
+            </div>
+            <div id="gl-panel-brand" style="display:none;">
+              <div style="font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.6;">Everything here is injected into all agent prompts as brand context. Paste URLs, upload descriptions, or write brand guidelines directly — agents will reference them when creating content, designs, and strategy.</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+                <div>
+                  <label style="font-size:10px;color:var(--text3);font-family:var(--font-mono);display:block;margin-bottom:4px;">Logo URL <span style="color:var(--text3);font-size:9px;">(public link — Figma, Drive, Dropbox)</span></label>
+                  <input id="brand-logo-url" type="text" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:6px 10px;color:var(--text);font-size:11px;font-family:var(--font-mono);outline:none;" placeholder="https://drive.google.com/..." onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'">
+                </div>
+                <div>
+                  <label style="font-size:10px;color:var(--text3);font-family:var(--font-mono);display:block;margin-bottom:4px;">Figma Brand File URL</label>
+                  <input id="brand-figma-url" type="text" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:6px 10px;color:var(--text);font-size:11px;font-family:var(--font-mono);outline:none;" placeholder="https://figma.com/file/..." onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'">
+                </div>
+                <div>
+                  <label style="font-size:10px;color:var(--text3);font-family:var(--font-mono);display:block;margin-bottom:4px;">Primary color</label>
+                  <div style="display:flex;gap:6px;align-items:center;">
+                    <input id="brand-color-primary" type="color" value="#4f8ef7" style="width:36px;height:28px;border:1px solid var(--border2);border-radius:4px;background:transparent;cursor:pointer;padding:1px;">
+                    <input id="brand-color-primary-hex" type="text" style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:6px 10px;color:var(--text);font-size:11px;font-family:var(--font-mono);outline:none;" placeholder="#4f8ef7" oninput="syncColorPicker('primary')">
+                  </div>
+                </div>
+                <div>
+                  <label style="font-size:10px;color:var(--text3);font-family:var(--font-mono);display:block;margin-bottom:4px;">Secondary color</label>
+                  <div style="display:flex;gap:6px;align-items:center;">
+                    <input id="brand-color-secondary" type="color" value="#a78bfa" style="width:36px;height:28px;border:1px solid var(--border2);border-radius:4px;background:transparent;cursor:pointer;padding:1px;">
+                    <input id="brand-color-secondary-hex" type="text" style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:6px 10px;color:var(--text);font-size:11px;font-family:var(--font-mono);outline:none;" placeholder="#a78bfa" oninput="syncColorPicker('secondary')">
+                  </div>
+                </div>
+              </div>
+              <div style="margin-bottom:10px;">
+                <label style="font-size:10px;color:var(--text3);font-family:var(--font-mono);display:block;margin-bottom:4px;">Brand voice &amp; tone <span style="color:var(--text3);font-size:9px;">(agents will write in this voice)</span></label>
+                <textarea id="brand-voice-ta" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text);font-family:var(--font-mono);line-height:1.6;resize:vertical;min-height:80px;outline:none;" placeholder="Bold, direct, and technical. We speak to operators and builders, not managers. No jargon. Short sentences. Confident but never arrogant..."></textarea>
+              </div>
+              <div>
+                <label style="font-size:10px;color:var(--text3);font-family:var(--font-mono);display:block;margin-bottom:4px;">Brand knowledge base <span style="color:var(--text3);font-size:9px;">(paste brand brief, positioning doc, messaging framework — agents reference this)</span></label>
+                <textarea id="brand-kb-ta" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text);font-family:var(--font-mono);line-height:1.6;resize:vertical;min-height:120px;outline:none;" placeholder="## NodyLab Brand&#10;&#10;Company: NodyLab&#10;Tagline: ...&#10;Mission: ...&#10;Target customer: ...&#10;Key differentiators: ...&#10;Competitors to beat: ..."></textarea>
+              </div>
+              <div style="margin-top:10px;padding:10px 12px;background:var(--bg3);border-radius:8px;border:1px solid var(--border);font-size:11px;color:var(--text3);line-height:1.6;">
+                💡 <strong style="color:var(--text2);">How to feed images &amp; files to agents:</strong> Claude's API supports vision — paste a public image URL in the chat (logo, mockup, screenshot) and the agent will analyze it. For large files (PDFs, decks), paste the content as text in the knowledge base above, or share a Google Drive / Notion link and ask the agent to reference it.
+              </div>
             </div>
             <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px;">
               <span id="gl-save-msg" style="font-size:11px;font-family:var(--font-mono);color:var(--green);opacity:0;transition:opacity 0.3s;align-self:center;">✓ Saved</span>
@@ -1679,6 +1769,18 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
         </div>
       </div>
 
+
+      <!-- ══════════════════════════════════ FOUNDER INBOX ══════════════════════════════════ -->
+      <div id="view-inbox" class="view">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Founder Inbox</div>
+            <div class="section-sub" id="inbox-sub">Decisions needed from you · agents are blocked until you respond</div>
+          </div>
+          <span class="live-badge" style="background:rgba(245,166,35,0.1);border-color:rgba(245,166,35,0.3);color:var(--amber);"><span class="live-dot" style="background:var(--amber);"></span>awaiting you</span>
+        </div>
+        <div class="inbox-list" id="inbox-list"></div>
+      </div>
 
       <!-- ══════════════════════════════════ LIVE MONITOR ══════════════════════════════════ -->
       <div id="view-monitor" class="view">
@@ -1805,6 +1907,9 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
       <div class="drawer-section-title">Agents involved</div>
       <div class="agents-involved" id="d-agents"></div>
     </div>
+    <div class="drawer-section">
+      <div id="d-deliverables-section"></div>
+    </div>
     <div class="drawer-section" style="border-bottom:none;">
       <div class="drawer-section-title">Decision log</div>
       <div class="decision-log" id="d-log"></div>
@@ -1847,19 +1952,39 @@ const agentData = [
 
 const taskData = {
   backlog: [
-    { id:'t3', title:'Build offer creation framework', desc:'CMO + COO: Structure high-converting offer for top 3 problems identified', tag:'Framework 3', tagColor:'rgba(245,166,35,0.15)', tagTextColor:'#f5a623', owner:'CMO', ownerColor:'linear-gradient(135deg,#f5a623,#854f0b)', ownerInitials:'CM', priority:'h' },
-    { id:'t5', title:'Activate viral content engine', desc:'CMO → Content Director: Hook bank, content matrix, weekly posting template', tag:'Framework 5', tagColor:'rgba(34,201,122,0.15)', tagTextColor:'#22c97a', owner:'CMO', ownerColor:'linear-gradient(135deg,#f5a623,#854f0b)', ownerInitials:'CM', priority:'m' },
-    { id:'t7', title:'Design scale system roadmap', desc:'COO + CTO: Phased roadmap to $30k MRR — 4 phases, 12 months', tag:'Framework 7', tagColor:'rgba(240,92,92,0.15)', tagTextColor:'#f05c5c', owner:'COO', ownerColor:'linear-gradient(135deg,#22c97a,#0f5c36)', ownerInitials:'CO', priority:'m' },
+    { id:'t3', title:'Build offer creation framework', desc:'CMO + COO: Structure high-converting offer for top 3 problems identified', tag:'Framework 3', tagColor:'rgba(245,166,35,0.15)', tagTextColor:'#f5a623', owner:'CMO', ownerColor:'linear-gradient(135deg,#f5a623,#854f0b)', ownerInitials:'CM', priority:'h',
+      deliverables:[] },
+    { id:'t5', title:'Activate viral content engine', desc:'CMO → Content Director: Hook bank, content matrix, weekly posting template', tag:'Framework 5', tagColor:'rgba(34,201,122,0.15)', tagTextColor:'#22c97a', owner:'CMO', ownerColor:'linear-gradient(135deg,#f5a623,#854f0b)', ownerInitials:'CM', priority:'m',
+      deliverables:[] },
+    { id:'t7', title:'Design scale system roadmap', desc:'COO + CTO: Phased roadmap to $30k MRR — 4 phases, 12 months', tag:'Framework 7', tagColor:'rgba(240,92,92,0.15)', tagTextColor:'#f05c5c', owner:'COO', ownerColor:'linear-gradient(135deg,#22c97a,#0f5c36)', ownerInitials:'CO', priority:'m',
+      deliverables:[] },
   ],
   progress: [
-    { id:'t2', title:'Problem prioritization engine', desc:'CEO collecting inputs from COO, CMO, CTO — master priority table', tag:'Framework 2', tagColor:'rgba(79,142,247,0.15)', tagTextColor:'#4f8ef7', owner:'CEO', ownerColor:'linear-gradient(135deg,#4f8ef7,#a78bfa)', ownerInitials:'CE', priority:'h' },
-    { id:'t6', title:'Competitor weakness map', desc:'CMO + CTO analyzing top 5 AI automation competitors — gaps and positioning', tag:'Framework 6', tagColor:'rgba(45,212,191,0.15)', tagTextColor:'#2dd4bf', owner:'CMO', ownerColor:'linear-gradient(135deg,#f5a623,#854f0b)', ownerInitials:'CM', priority:'h' },
+    { id:'t2', title:'Problem prioritization engine', desc:'CEO collecting inputs from COO, CMO, CTO — master priority table', tag:'Framework 2', tagColor:'rgba(79,142,247,0.15)', tagTextColor:'#4f8ef7', owner:'CEO', ownerColor:'linear-gradient(135deg,#4f8ef7,#a78bfa)', ownerInitials:'CE', priority:'h',
+      deliverables:[
+        { type:'notion', label:'Priority table draft', url:'#' },
+        { type:'doc', label:'CEO brief v1', url:'#' },
+      ]},
+    { id:'t6', title:'Competitor weakness map', desc:'CMO + CTO analyzing top 5 AI automation competitors — gaps and positioning', tag:'Framework 6', tagColor:'rgba(45,212,191,0.15)', tagTextColor:'#2dd4bf', owner:'CMO', ownerColor:'linear-gradient(135deg,#f5a623,#854f0b)', ownerInitials:'CM', priority:'h',
+      deliverables:[
+        { type:'doc', label:'Competitor analysis WIP', url:'#' },
+      ]},
   ],
   review: [
-    { id:'t4', title:'Distribution domination plan', desc:'CMO delivered 30-day plan — CEO review pending before founder approval', tag:'Framework 4', tagColor:'rgba(167,139,250,0.15)', tagTextColor:'#a78bfa', owner:'CEO', ownerColor:'linear-gradient(135deg,#4f8ef7,#a78bfa)', ownerInitials:'CE', priority:'h' },
+    { id:'t4', title:'Distribution domination plan', desc:'CMO delivered 30-day plan — awaiting founder approval on positioning', tag:'Framework 4', tagColor:'rgba(167,139,250,0.15)', tagTextColor:'#a78bfa', owner:'CEO', ownerColor:'linear-gradient(135deg,#4f8ef7,#a78bfa)', ownerInitials:'CE', priority:'h',
+      requiresApproval: true,
+      deliverables:[
+        { type:'doc', label:'30-Day Distribution Plan v1', url:'#' },
+        { type:'notion', label:'Channel Strategy Board', url:'#' },
+        { type:'ppt', label:'Exec Summary Slides', url:'#' },
+      ]},
   ],
   done: [
-    { id:'t1', title:'Market breakdown system', desc:'CMO delivered TAM/SAM/SOM, demand trends, opportunities, and VC capital flow', tag:'Framework 1', tagColor:'rgba(34,201,122,0.15)', tagTextColor:'#22c97a', owner:'CMO', ownerColor:'linear-gradient(135deg,#f5a623,#854f0b)', ownerInitials:'CM', priority:'h' },
+    { id:'t1', title:'Market breakdown system', desc:'CMO delivered TAM/SAM/SOM, demand trends, opportunities, and VC capital flow', tag:'Framework 1', tagColor:'rgba(34,201,122,0.15)', tagTextColor:'#22c97a', owner:'CMO', ownerColor:'linear-gradient(135deg,#f5a623,#854f0b)', ownerInitials:'CM', priority:'h',
+      deliverables:[
+        { type:'doc', label:'Market Breakdown Report', url:'#' },
+        { type:'notion', label:'TAM/SAM/SOM Model', url:'#' },
+      ]},
   ],
 };
 
@@ -1870,6 +1995,7 @@ const viewTabConfigs = {
   roles:       [['All','all'],['C-Level','clevel-t'],['Specialist','specialist'],['Cross-cutting','crosscut-t']],
   board:       [['All Tasks','all'],['High Priority','high'],['In Progress','in-progress'],['Done','done']],
   comms:       null,
+  inbox:       null,
   monitor:     null,
   admin:       null,
   office:      null,
@@ -1910,6 +2036,7 @@ function showView(name, el) {
   }
   if (name === 'roles') renderRoles();
   if (name === 'comms') renderAgentList();
+  if (name === 'inbox') renderInbox();
   if (name === 'monitor') renderMonitor();
   if (name === 'office') { renderOffice(); setTimeout(drawNeuralLines, 120); }
 }
@@ -2106,14 +2233,26 @@ function renderRoles() {
 }
 
 // ── RENDER BOARD ──
+const _dlvIcons = { figma:'🎨', pdf:'📑', html:'🌐', ppt:'📊', doc:'📄', notion:'◎', gdrive:'⊞', link:'🔗' };
+
+function renderDlvChips(deliverables, compact) {
+  if (!deliverables || !deliverables.length) return '';
+  const chips = deliverables.map(d =>
+    `<a class="dlv-chip ${d.type}" href="${d.url||'#'}" target="_blank" onclick="event.stopPropagation()">${_dlvIcons[d.type]||'🔗'} ${d.label}</a>`
+  ).join('');
+  return `<div class="dlv-chips">${chips}</div>`;
+}
+
 function renderTaskCard(t) {
   const priClass = t.priority === 'h' ? 'pri-h' : t.priority === 'm' ? 'pri-m' : 'pri-l';
   const priLabel = t.priority === 'h' ? 'High' : t.priority === 'm' ? 'Medium' : 'Low';
+  const approvalBadge = t.requiresApproval ? `<span style="font-size:10px;font-family:var(--font-mono);color:var(--amber);margin-left:6px;">⚠ needs your approval</span>` : '';
   return `<div class="task-card" onclick="openDrawer('${t.id}')">
     <div class="tc-tag" style="background:${t.tagColor};color:${t.tagTextColor};">${t.tag}</div>
-    <div class="tc-title">${t.title}</div>
+    <div class="tc-title">${t.title}${approvalBadge}</div>
     <div class="tc-desc">${t.desc}</div>
-    <div class="tc-footer">
+    ${renderDlvChips(t.deliverables)}
+    <div class="tc-footer" style="margin-top:${t.deliverables&&t.deliverables.length?'8px':'0'}">
       <div class="tc-owner">
         <div class="tc-avatar" style="background:${t.ownerColor};">${t.ownerInitials}</div>
         ${t.owner}
@@ -2334,14 +2473,29 @@ function _initGlobalConfig() {
   const mta = document.getElementById('gl-mcp-ta');
   if (ta && _globalConfig.guidelines) ta.value = _globalConfig.guidelines;
   if (mta && _globalConfig.mcp) mta.value = _globalConfig.mcp;
+  const b = _globalConfig.brand || {};
+  const _set = (id, val) => { const el = document.getElementById(id); if (el && val) el.value = val; };
+  _set('brand-logo-url', b.logoUrl);
+  _set('brand-figma-url', b.figmaUrl);
+  _set('brand-color-primary-hex', b.colorPrimary);
+  _set('brand-color-secondary-hex', b.colorSecondary);
+  if (b.colorPrimary) { const el = document.getElementById('brand-color-primary'); if (el) el.value = b.colorPrimary; }
+  if (b.colorSecondary) { const el = document.getElementById('brand-color-secondary'); if (el) el.value = b.colorSecondary; }
+  _set('brand-voice-ta', b.voice);
+  _set('brand-kb-ta', b.kb);
   _renderGlobalSkills();
 }
 
 function switchGlTab(tab) {
-  ['guidelines','skills','mcp'].forEach(t => {
+  ['guidelines','skills','mcp','brand'].forEach(t => {
     document.getElementById('gl-panel-' + t).style.display = t === tab ? '' : 'none';
     document.getElementById('gl-tab-' + t).classList.toggle('active', t === tab);
   });
+}
+
+function syncColorPicker(which) {
+  const hex = document.getElementById(`brand-color-${which}-hex`).value;
+  if (/^#[0-9a-fA-F]{6}$/.test(hex)) document.getElementById(`brand-color-${which}`).value = hex;
 }
 
 function _renderGlobalSkills() {
@@ -2376,6 +2530,14 @@ function removeGlobalSkill(idx) {
 function saveGlobalConfig() {
   _globalConfig.guidelines = (document.getElementById('gl-guidelines-ta') || {}).value || '';
   _globalConfig.mcp = (document.getElementById('gl-mcp-ta') || {}).value || '';
+  _globalConfig.brand = {
+    logoUrl:   (document.getElementById('brand-logo-url') || {}).value || '',
+    figmaUrl:  (document.getElementById('brand-figma-url') || {}).value || '',
+    colorPrimary:   (document.getElementById('brand-color-primary-hex') || {}).value || '',
+    colorSecondary: (document.getElementById('brand-color-secondary-hex') || {}).value || '',
+    voice: (document.getElementById('brand-voice-ta') || {}).value || '',
+    kb:    (document.getElementById('brand-kb-ta') || {}).value || '',
+  };
   localStorage.setItem('nodylab_global', JSON.stringify(_globalConfig));
   _ghSyncFile('global_config', _globalConfig);
   const msg = document.getElementById('gl-save-msg');
@@ -2466,10 +2628,19 @@ function _buildPrompt(agentId) {
   const specific = agentPromptsStore[agentId] || agentSystemPrompts[agentId] || agentSystemPrompts.ceo;
   const skills = agentSkillsStore[agentId];
   const skillsLine = skills && skills.length ? '\n\nInstalled skills: ' + skills.join(', ') + '.' : '';
-  // Global skills injected as available tools
   const globalSkills = (_globalConfig.skills || []).map(s => `\n### Skill: ${s.name}\n${s.content}`).join('');
   const globalGuidelines = _globalConfig.guidelines ? '\n\n## Global Guidelines\n' + _globalConfig.guidelines : '';
-  return ORG_CONTEXT + globalGuidelines + '\n\n## Your Specific Role\n' + specific + skillsLine + (globalSkills ? '\n\n## Available Skills\n' + globalSkills : '');
+  const b = _globalConfig.brand || {};
+  let brandSection = '';
+  if (b.kb || b.voice || b.logoUrl || b.figmaUrl || b.colorPrimary) {
+    brandSection = '\n\n## Brand Context';
+    if (b.kb)           brandSection += '\n' + b.kb;
+    if (b.voice)        brandSection += '\n\n### Brand voice & tone\n' + b.voice;
+    if (b.colorPrimary) brandSection += '\n\n### Brand colors\nPrimary: ' + b.colorPrimary + (b.colorSecondary ? ' · Secondary: ' + b.colorSecondary : '');
+    if (b.logoUrl)      brandSection += '\n\n### Logo\n' + b.logoUrl;
+    if (b.figmaUrl)     brandSection += '\n\n### Figma brand file\n' + b.figmaUrl;
+  }
+  return ORG_CONTEXT + globalGuidelines + brandSection + '\n\n## Your Specific Role\n' + specific + skillsLine + (globalSkills ? '\n\n## Available Skills\n' + globalSkills : '');
 }
 
 // ── AGENT SKILLS + PROMPTS STORE ──
@@ -3014,6 +3185,7 @@ renderBoard();
 renderAgentList();
 renderSidebarStatus();
 _initGlobalConfig();
+_updateInboxBadge();
 window._currentAgent = 'ceo';
 window._currentView = 'overview';
 
@@ -3301,6 +3473,32 @@ function openDrawer(taskId) {
     </div>
   `).join('');
 
+  // Deliverables section
+  const dlvSection = document.getElementById('d-deliverables-section');
+  if (dlvSection) {
+    const t = Object.values(taskData).flat().find(x => x.id === taskId);
+    const dlvs = (t && t.deliverables) || d.deliverables || [];
+    const approvalNeeded = t && t.requiresApproval;
+    dlvSection.innerHTML = `
+      ${approvalNeeded ? `<div class="approval-banner">
+        <div class="approval-banner-icon">⚠</div>
+        <div class="approval-banner-text">
+          <div class="approval-banner-title">Founder approval required</div>
+          <div class="approval-banner-sub">${d.approvalNote || 'This task is blocked until you review and approve the deliverables below.'}</div>
+          <div class="approval-actions">
+            <button class="btn-approve" onclick="approveTask('${taskId}')">✓ Approve</button>
+            <button class="btn-request" onclick="requestChanges('${taskId}')">↩ Request changes</button>
+          </div>
+        </div>
+      </div>` : ''}
+      <div class="drawer-section-title" style="margin-top:${approvalNeeded?'14px':'0'}">Deliverables</div>
+      ${dlvs.length ? renderDlvChips(dlvs) : `<div style="font-size:11px;color:var(--text3);">No deliverables attached yet.</div>`}
+      <div style="margin-top:10px;">
+        <button class="dlv-chip dlv-chip-add" onclick="addDeliverablePrompt('${taskId}')">+ Attach link</button>
+      </div>
+    `;
+  }
+
   document.getElementById('task-drawer').classList.add('open');
   document.getElementById('drawer-overlay').classList.add('open');
 }
@@ -3308,6 +3506,204 @@ function openDrawer(taskId) {
 function closeDrawer() {
   document.getElementById('task-drawer').classList.remove('open');
   document.getElementById('drawer-overlay').classList.remove('open');
+}
+
+// ══════════════════════════════════
+// FOUNDER INBOX
+// ══════════════════════════════════
+
+const _founderInbox = (() => {
+  try { return JSON.parse(localStorage.getItem('nodylab_inbox') || 'null') || _defaultInbox(); }
+  catch(e) { return _defaultInbox(); }
+})();
+
+function _defaultInbox() {
+  return [
+    {
+      id: 'inb-t4',
+      taskId: 't4',
+      status: 'pending',
+      urgent: true,
+      from: 'CEO Agent',
+      fromInitials: 'CE',
+      fromColor: 'linear-gradient(135deg,#4f8ef7,#a78bfa)',
+      tag: 'Framework 4',
+      tagColor: '#a78bfa',
+      tagBg: 'rgba(167,139,250,0.15)',
+      title: 'Distribution domination plan — needs your sign-off',
+      body: 'CMO completed the 30-day distribution plan. CEO has reviewed and flagged channel 5 (partner referrals) as Phase 2. The plan is ready for your approval. Once approved, SDR UAE outreach and Framework 5 content engine will unblock immediately.',
+      deliverables: [
+        { type:'doc', label:'30-Day Distribution Plan v1', url:'#' },
+        { type:'notion', label:'Channel Strategy Board', url:'#' },
+        { type:'ppt', label:'Exec Summary Slides', url:'#' },
+      ],
+      time: 'Apr 8 · 10:30',
+    },
+    {
+      id: 'inb-brand',
+      taskId: null,
+      status: 'pending',
+      urgent: true,
+      from: 'Art Designer',
+      fromInitials: 'AD',
+      fromColor: 'linear-gradient(135deg,#f0997b,#712b13)',
+      tag: 'Brand',
+      tagColor: '#f472b6',
+      tagBg: 'rgba(244,114,182,0.12)',
+      title: 'Brand direction needed before assets can be created',
+      body: 'I\'m ready to build the visual identity system — logo concepts, color palette, typography, and social templates. To start, I need your input on brand direction: tone (bold vs minimal), color mood, and any reference brands you admire. You can also upload your logo or brand brief in Admin → Brand.',
+      deliverables: [
+        { type:'figma', label:'Brand Moodboard (empty)', url:'#' },
+        { type:'doc', label:'Brand Brief Template', url:'#' },
+      ],
+      time: 'Apr 8 · 09:15',
+    },
+    {
+      id: 'inb-website',
+      taskId: null,
+      status: 'pending',
+      urgent: false,
+      from: 'UX/UI Designer',
+      fromInitials: 'UX',
+      fromColor: 'linear-gradient(135deg,#38bdf8,#0c447c)',
+      tag: 'Website',
+      tagColor: '#38bdf8',
+      tagBg: 'rgba(56,189,248,0.1)',
+      title: 'Website wireframes blocked — waiting on brand guidelines',
+      body: 'nodylab.com wireframes are ready to start once brand guidelines are approved. I need: logo final, primary/secondary colors, headline font choice, and the hero positioning statement from the CMO distribution plan. Fullstack Dev is on standby to build once the spec is locked.',
+      deliverables: [
+        { type:'figma', label:'Wireframe v0 (skeleton)', url:'#' },
+        { type:'doc', label:'Website Copy Brief', url:'#' },
+      ],
+      time: 'Apr 7 · 16:45',
+    },
+  ];
+}
+
+function _saveInbox() {
+  try { localStorage.setItem('nodylab_inbox', JSON.stringify(_founderInbox)); } catch(e) {}
+}
+
+function _updateInboxBadge() {
+  const pending = _founderInbox.filter(i => i.status === 'pending').length;
+  const badge = document.getElementById('inbox-badge');
+  if (badge) {
+    badge.textContent = pending;
+    badge.style.display = pending ? '' : 'none';
+  }
+  const sub = document.getElementById('inbox-sub');
+  if (sub) sub.textContent = pending
+    ? `${pending} decision${pending>1?'s':''} needed from you · agents are blocked until you respond`
+    : 'All caught up — no pending decisions';
+}
+
+function renderInbox() {
+  const list = document.getElementById('inbox-list');
+  if (!list) return;
+  const pending = _founderInbox.filter(i => i.status === 'pending');
+  const resolved = _founderInbox.filter(i => i.status !== 'pending');
+
+  if (!_founderInbox.length) {
+    list.innerHTML = `<div class="inbox-empty"><div class="inbox-empty-icon">📭</div>No pending decisions — all caught up.</div>`;
+    return;
+  }
+
+  const renderCard = (item) => {
+    const isResolved = item.status !== 'pending';
+    const resolvedBanner = isResolved ? `<div style="padding:8px 16px;font-size:11px;font-family:var(--font-mono);color:${item.status==='approved'?'var(--green)':'var(--text3)'};">
+      ${item.status === 'approved' ? '✓ Approved by you' : '↩ Changes requested'}
+    </div>` : '';
+    return `<div class="inbox-card ${item.urgent && !isResolved ? 'urgent' : ''}" style="${isResolved ? 'opacity:0.55;' : ''}">
+      <div class="inbox-card-head">
+        <div class="inbox-agent-av" style="background:${item.fromColor};">${item.fromInitials}</div>
+        <div class="inbox-card-info">
+          <div class="inbox-card-from">${item.from} → Cristiano</div>
+          <div class="inbox-card-title">${item.title}</div>
+        </div>
+        <span class="inbox-card-tag" style="background:${item.tagBg};color:${item.tagColor};">${item.tag}</span>
+      </div>
+      <div class="inbox-card-body">${item.body}</div>
+      ${item.deliverables && item.deliverables.length ? `
+      <div class="inbox-card-dlv">
+        <div class="inbox-card-dlv-label">Deliverables attached</div>
+        ${renderDlvChips(item.deliverables)}
+      </div>` : ''}
+      ${resolvedBanner}
+      ${!isResolved ? `
+      <div class="inbox-card-footer">
+        <button class="btn-approve" onclick="approveInboxItem('${item.id}')">✓ Approve</button>
+        <button class="btn-request" onclick="requestInboxChanges('${item.id}')">↩ Request changes</button>
+        ${item.taskId ? `<button class="btn" style="font-size:11px;background:var(--bg3);border:1px solid var(--border2);padding:5px 12px;border-radius:6px;cursor:pointer;" onclick="openDrawer('${item.taskId}');closeInboxIfNeeded();">View task</button>` : ''}
+        <span class="inbox-time">${item.time}</span>
+      </div>` : `<div class="inbox-card-footer"><span class="inbox-time">${item.time}</span></div>`}
+    </div>`;
+  };
+
+  list.innerHTML = pending.map(renderCard).join('') +
+    (resolved.length ? `<div style="font-size:10px;font-family:var(--font-mono);color:var(--text3);margin:16px 0 8px;text-transform:uppercase;letter-spacing:0.08em;">Resolved</div>` + resolved.map(renderCard).join('') : '');
+
+  _updateInboxBadge();
+}
+
+function approveInboxItem(id) {
+  const item = _founderInbox.find(i => i.id === id);
+  if (!item) return;
+  item.status = 'approved';
+  _saveInbox();
+  renderInbox();
+  // If tied to a board task, move it
+  if (item.taskId) {
+    const allCols = ['backlog','progress','review','done'];
+    for (const col of allCols) {
+      const idx = taskData[col].findIndex(t => t.id === item.taskId);
+      if (idx !== -1) {
+        const task = taskData[col].splice(idx, 1)[0];
+        task.requiresApproval = false;
+        taskData.done.push(task);
+        renderBoard();
+        break;
+      }
+    }
+  }
+}
+
+function requestInboxChanges(id) {
+  const item = _founderInbox.find(i => i.id === id);
+  if (!item) return;
+  item.status = 'changes-requested';
+  _saveInbox();
+  renderInbox();
+}
+
+function approveTask(taskId) {
+  const inbItem = _founderInbox.find(i => i.taskId === taskId);
+  if (inbItem) approveInboxItem(inbItem.id);
+  else {
+    for (const col of ['backlog','progress','review','done']) {
+      const idx = taskData[col].findIndex(t => t.id === taskId);
+      if (idx !== -1) { taskData[col][idx].requiresApproval = false; renderBoard(); break; }
+    }
+  }
+  closeDrawer();
+}
+
+function requestChanges(taskId) {
+  const inbItem = _founderInbox.find(i => i.taskId === taskId);
+  if (inbItem) requestInboxChanges(inbItem.id);
+  closeDrawer();
+}
+
+function addDeliverablePrompt(taskId) {
+  const url = prompt('Paste deliverable URL (Figma, Notion, Google Drive, PDF, etc.):');
+  if (!url) return;
+  const label = prompt('Label for this deliverable:') || 'Untitled';
+  const type = url.includes('figma') ? 'figma' : url.includes('notion') ? 'notion' : url.includes('drive.google') ? 'gdrive' : url.includes('.pdf') ? 'pdf' : url.includes('.ppt') ? 'ppt' : 'link';
+  for (const col of ['backlog','progress','review','done']) {
+    const t = taskData[col].find(x => x.id === taskId);
+    if (t) { if (!t.deliverables) t.deliverables = []; t.deliverables.push({ type, label, url }); break; }
+  }
+  renderBoard();
+  openDrawer(taskId);
 }
 
 // ── LIVE ACTIVITY FEED AUTO-UPDATE ──
