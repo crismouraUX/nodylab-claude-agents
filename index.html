@@ -1162,12 +1162,12 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
 
 /* ── AGENTS OFFICE ── */
 .office-floor { position: relative; overflow: hidden; }
-.office-neural-svg { position: absolute; inset: 0; pointer-events: none; z-index: 2; width: 100%; height: 100%; overflow: visible; }
+.office-neural-svg { position: absolute; inset: 0; pointer-events: none; z-index: 10; width: 100%; height: 100%; overflow: visible; }
 .office-rooms { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; position: relative; z-index: 3; }
 .office-room { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
 .office-room-label { font-size: 10px; color: var(--text3); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
 .office-desks { display: flex; flex-wrap: wrap; gap: 10px; }
-.agent-desk { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 12px; width: 148px; cursor: pointer; transition: all 0.15s; position: relative; z-index: 4; }
+.agent-desk { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 12px; width: 148px; cursor: pointer; transition: all 0.15s; position: relative; z-index: 12; }
 .agent-desk:hover { border-color: var(--border2); background: var(--bg4); }
 .agent-desk.desk-active { border-color: rgba(79,142,247,0.35); background: rgba(79,142,247,0.04); }
 .agent-desk.desk-idle { opacity: 0.45; }
@@ -1220,11 +1220,10 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
       </div>
       <div class="nav-item" onclick="showView('monitor',this)">
         <span class="nav-icon pulse-icon">◉</span> Live Monitor
-        <span class="nav-badge active-b">5</span>
+        <span class="nav-badge active-b" id="badge-monitor">0</span>
       </div>
       <div class="nav-item" onclick="showView('comms',this)">
         <span class="nav-icon">◎</span> Agent Chat
-        <span class="nav-badge active-b">3</span>
       </div>
       <div class="nav-item" id="nav-inbox" onclick="showView('inbox',this)">
         <span class="nav-icon">📬</span> Inbox
@@ -1242,11 +1241,11 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
       </div>
       <div class="nav-item" onclick="showView('roles',this)">
         <span class="nav-icon">◈</span> Roles
-        <span class="nav-badge">17</span>
+        <span class="nav-badge" id="badge-roles">0</span>
       </div>
       <div class="nav-item" onclick="showView('board',this)">
         <span class="nav-icon">▦</span> Task Board
-        <span class="nav-badge active-b">7</span>
+        <span class="nav-badge active-b" id="badge-board">0</span>
       </div>
     </div>
 
@@ -1288,15 +1287,15 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
             <div class="section-sub">NodyLab launch sprint · April 2026</div>
           </div>
           <div style="display:flex;gap:8px;">
-            <button class="btn btn-ghost">Export report</button>
-            <button class="btn btn-primary">+ New task</button>
+            <button class="btn btn-ghost" onclick="exportOverviewReport()">Export report</button>
+            <button class="btn btn-primary" onclick="showView('board',document.querySelector('[onclick*=\'board\']'))">+ New task</button>
           </div>
         </div>
 
         <div class="stat-grid">
           <div class="stat-card" style="color:var(--accent);">
             <div class="stat-label">Active agents</div>
-            <div class="stat-value" id="stat-agents" style="color:var(--accent);">17</div>
+            <div class="stat-value" id="stat-agents" style="color:var(--accent);">0</div>
             <div class="stat-delta">All systems <span>online</span></div>
           </div>
           <div class="stat-card" style="color:var(--amber);">
@@ -1468,11 +1467,11 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
         <div class="section-head">
           <div>
             <div class="section-title">Task Board</div>
-            <div class="section-sub">Strategic analysis sprint · Framework 1–7</div>
+            <div class="section-sub">Brand Sprint · April 2026</div>
           </div>
           <div style="display:flex;gap:8px;">
-            <button class="btn btn-ghost">Filter</button>
-            <button class="btn btn-primary">+ Add task</button>
+            <button class="btn btn-ghost" onclick="toggleBoardFilter(this)">Filter</button>
+            <button class="btn btn-primary" onclick="promptAddTask()">+ Add task</button>
           </div>
         </div>
         <div class="board">
@@ -1532,7 +1531,7 @@ body { background: var(--bg); color: var(--text); font-family: var(--font-body);
                 <div class="chat-head-name" id="chat-name">CEO Agent</div>
                 <div class="chat-head-status" id="chat-status">● Active · responding</div>
               </div>
-              <button class="btn btn-ghost" style="font-size:11px;">Clear</button>
+              <button class="btn btn-ghost" style="font-size:11px;" onclick="clearAgentChat()">Clear</button>
             </div>
             <div class="chat-messages" id="chat-msgs">
               <div class="msg agent">
@@ -3380,6 +3379,16 @@ function drawNeuralLines() {
   const floorRect = floor.getBoundingClientRect();
   svg.setAttribute('viewBox', `0 0 ${floorRect.width} ${floorRect.height}`);
 
+  // Build set of agent ids with pending inbox items (waiting for founder)
+  const pendingFromAgents = new Set();
+  _founderInbox.forEach(item => {
+    if (item.status === 'pending') {
+      // match by agent name or id
+      const match = agentData.find(a => a.name === item.from || a.id === item.from);
+      if (match) pendingFromAgents.add(match.id);
+    }
+  });
+
   let content = '';
   _neuralLinks.forEach(({ from, to }) => {
     const fromEl = document.querySelector(`[data-desk="${from}"]`);
@@ -3388,29 +3397,49 @@ function drawNeuralLines() {
 
     const fR = fromEl.getBoundingClientRect();
     const tR = toEl.getBoundingClientRect();
+    // Connect at bottom-center of each card so lines emerge from under the card
     const x1 = fR.left + fR.width / 2 - floorRect.left;
-    const y1 = fR.top + fR.height / 2 - floorRect.top;
+    const y1 = fR.bottom - floorRect.top;
     const x2 = tR.left + tR.width / 2 - floorRect.left;
-    const y2 = tR.top + tR.height / 2 - floorRect.top;
+    const y2 = tR.bottom - floorRect.top;
 
     const cx = (x1 + x2) / 2;
-    const cy = (y1 + y2) / 2 - Math.abs(x2 - x1) * 0.25;
+    const cy = (y1 + y2) / 2 + Math.abs(x2 - x1) * 0.15;
 
     const fromA = agentData.find(a => a.id === from);
     const toA = agentData.find(a => a.id === to);
-    const active = (fromA && fromA.status !== 'idle') && (toA && toA.status !== 'idle');
-    const color = active ? '#4f8ef7' : '#1e2a3d';
-    const opacity = active ? 0.6 : 0.25;
-    const dashDur = 0.8 + Math.random() * 0.6;
-    const pulseDur = 1.4 + Math.random() * 0.8;
-    const pid = `np-${from}-${to}`;
 
-    content += `<path id="${pid}" d="M${x1},${y1} Q${cx},${cy} ${x2},${y2}" stroke="${color}" stroke-width="${active ? 1.2 : 0.8}" fill="none" opacity="${opacity}" stroke-dasharray="5 4">
+    const fromIdle = !fromA || fromA.status === 'idle';
+    const toIdle = !toA || toA.status === 'idle';
+    const fromProcessing = fromA && (fromA.status === 'busy' || _agentLiveStatus[from]);
+    const toProcessing = toA && (toA.status === 'busy' || _agentLiveStatus[to]);
+    const fromWaiting = pendingFromAgents.has(from);
+    const toWaiting = pendingFromAgents.has(to);
+
+    let color, strokeWidth, opacity, dashDur;
+    if (fromIdle && toIdle) {
+      color = '#1e2a3d'; strokeWidth = 0.7; opacity = 0.18; dashDur = 2;
+    } else if (fromWaiting || toWaiting) {
+      // Yellow = waiting for founder input
+      color = '#F5A623'; strokeWidth = 1.4; opacity = 0.75; dashDur = 0.5 + Math.random() * 0.3;
+    } else if (fromProcessing || toProcessing) {
+      // Green = actively processing
+      color = '#22C97A'; strokeWidth = 1.5; opacity = 0.8; dashDur = 0.6 + Math.random() * 0.4;
+    } else {
+      // Blue = both online/active
+      color = '#4f8ef7'; strokeWidth = 1.1; opacity = 0.55; dashDur = 0.9 + Math.random() * 0.5;
+    }
+
+    const pulseDur = dashDur * 1.8 + Math.random() * 0.6;
+    const pid = `np-${from}-${to}`;
+    const isActive = !fromIdle || !toIdle;
+
+    content += `<path id="${pid}" d="M${x1},${y1} Q${cx},${cy} ${x2},${y2}" stroke="${color}" stroke-width="${strokeWidth}" fill="none" opacity="${opacity}" stroke-dasharray="5 4">
       <animate attributeName="stroke-dashoffset" from="9" to="0" dur="${dashDur}s" repeatCount="indefinite"/>
     </path>`;
 
-    if (active) {
-      content += `<circle r="2.5" fill="${color}" opacity="0.9">
+    if (isActive) {
+      content += `<circle r="${fromProcessing || toProcessing ? 3 : 2}" fill="${color}" opacity="0.9">
         <animateMotion dur="${pulseDur}s" repeatCount="indefinite" path="M${x1},${y1} Q${cx},${cy} ${x2},${y2}"/>
       </circle>`;
     }
@@ -3419,84 +3448,13 @@ function drawNeuralLines() {
   svg.innerHTML = content;
 }
 
-// ── BRAND SPRINT SEED (runs once on fresh session) ──
-(function _seedBrandSprint() {
-  // 1. Pre-fill brand config if not yet set by user
-  if (!_globalConfig.brand || !_globalConfig.brand.colorPrimary) {
-    _globalConfig.brand = {
-      logoUrl: '',
-      figmaUrl: '',
-      colorPrimary: '#C5F000',
-      colorSecondary: '#0A0A0A',
-      voice: 'Sharp. Human. Confident. Short sentences. Active voice. Numbers over words. No corporate filler. The period after "Lab." is our signature — deliberate, precise, done.',
-      kb: `## Nody Lab. — Brand Knowledge Base
-
-Brand name: Nody Lab. (always with the lime period — it is the mark, not punctuation)
-Tagline: "Your team. Always on."
-Mission: Make elite-calibre business operations accessible to any founder via AI agents.
-
-Colors:
-- Void Black: #0A0A0A (primary background)
-- Electric Lime: #C5F000 (primary accent — CTAs, highlights, the period, active states)
-- Pure White: #FFFFFF (primary text, logo outline)
-- Obsidian: #111111 (card backgrounds)
-- Muted: #888888 (secondary text)
-
-Typography:
-- Display/Headlines: Outfit Bold 700 — uppercase, tight tracking (-0.03em)
-- Body: Inter Regular 400 / Medium 500
-- Code/UI labels: JetBrains Mono 400
-
-Logo: Smiling face inside a TV monitor. White rounded outline, lime green oval eyes and curved smile arc. 4 variants: icon mark, horizontal lockup, stacked lockup, wordmark only. Lime period is non-negotiable in all wordmark variants.
-
-Icon style: 2px stroke, rounded caps, 24×24px grid, minimal geometric. One lime accent element per icon for active states.
-
-Inspiration: landonorris.com — dark background, electric lime sole accent, high contrast, kinetic motion energy applied to B2B AI automation.
-
-Personality: Friendly + Precise + Fast + Confident + Human.
-Voice anti-patterns: No hedging. No passive voice. No filler words. No "leverage synergies". No corporate jargon.`,
-    };
-    try { localStorage.setItem('nodylab_global', JSON.stringify(_globalConfig)); } catch(e) {}
-  }
-
-  // 2. Seed Brand Guidelines deliverable if not present
-  if (!_deliverableStore['dlv-brand-v1']) {
-    _deliverableStore['dlv-brand-v1'] = {
-      id: 'dlv-brand-v1',
-      title: 'Brand Guidelines v1 — NodyLab Visual Identity System',
-      content: `# Nody Lab. — Brand Guidelines v1\n\n## Color System\n- **Void Black** \`#0A0A0A\` — Primary background\n- **Electric Lime** \`#C5F000\` — Primary accent (CTAs, highlights, the period, active states)\n- **Pure White** \`#FFFFFF\` — Primary text, logo outline\n- **Obsidian** \`#111111\` — Card backgrounds\n- **Muted** \`#888888\` — Secondary text\n\n## Typography\n- **Display:** Outfit Bold 700 — uppercase, tracking -0.03em\n- **Body:** Inter Regular 400 / Medium 500 — line-height 1.6\n- **Code/UI:** JetBrains Mono 400\n\n## Logo System\nIcon: Smiling face inside TV monitor — white 5px stroke rounded rectangle, lime oval eyes, lime smile arc.\n\n**4 lockups:**\n1. Icon mark (1:1 square) — app icons, favicons, social avatars\n2. Horizontal — nav bars, email headers\n3. Stacked — square formats, splash screens\n4. Wordmark — "Nody Lab." with lime period — footnotes, watermarks\n\n**Rules:** Never drop the lime period. Never recolor lime elements. Clear space = width of capital N.\n\n## Buttons\n- **Primary:** #C5F000 bg, #0A0A0A text, 8px radius — hover: scale(1.02) + brighter lime\n- **Secondary:** transparent, white 1.5px border, white text\n- **Ghost:** transparent, #888 text — hover: white\n- **Danger:** rgba(240,92,92,0.12) bg, #F05C5C text\n\n## Icon Language\nStyle: 2px stroke, rounded caps/joins, 24×24px grid, 2px padding. Geometric, minimal. One lime element for active state.\n\n**Burger menu:** 3 lines — outer lines full width white, center line 60% width lime. Hover: center extends to full. Open: morphs to × with lime dot.\n\n## Motion\n- **Easing:** cubic-bezier(0.65, 0.05, 0, 1) — sharp in, smooth out (F1 energy)\n- **Micro:** 150ms (hovers), **Standard:** 250ms (panels), **Modal:** 350ms\n\n## Brand Voice\nSharp. Human. Confident.\n- Short sentences — max 12 words for key messages\n- Active voice always — "Agents built this" not "This was built"\n- Numbers over words — "17 agents" not "many agents"\n- The period is intentional — use it as a power move in headlines\n\n**Anti-patterns:** Never hedge. Never passive voice. Never jargon. Never generic.\n\n---\n*Produced by NodyLab CMO Agent · Brand Sprint 2026*`,
-      agentId: 'cmo',
-      agentName: 'CMO Agent',
-      agentColor: 'linear-gradient(135deg,#f5a623,#854f0b)',
-      agentInitials: 'CM',
-      timestamp: 'Apr 11 · 12:00',
-      status: 'pending',
-    };
-    _saveDeliverables();
-  }
-
-  // 3. Seed Inbox with brand approval request if not already there
-  if (!_founderInbox.find(i => i.id === 'inb-brand-v1')) {
-    _founderInbox.unshift({
-      id: 'inb-brand-v1',
-      taskId: 'bs-1',
-      status: 'pending',
-      urgent: true,
-      from: 'CMO Agent',
-      fromInitials: 'CM',
-      fromColor: 'linear-gradient(135deg,#f5a623,#854f0b)',
-      tag: 'Brand Sprint',
-      tagColor: '#C5F000',
-      tagBg: 'rgba(197,240,0,0.1)',
-      title: 'Brand Guidelines v1 — ready for your approval',
-      body: 'I\'ve completed the NodyLab Brand Guidelines v1 based on your logo drafts and landonorris.com inspiration. Covers: color system (#0A0A0A / #C5F000 / #FFFFFF), typography (Outfit + Inter + JetBrains Mono), logo usage rules for all 4 lockups, button specs, icon language, motion system, and brand voice. Art Designer and UX/UI are ready to execute the icon set and component specs as soon as you approve. Your sign-off unlocks the full sprint.',
-      deliverables: [
-        { type:'doc', label:'Brand Guidelines v1', url:'#', deliverableId:'dlv-brand-v1' },
-      ],
-      time: 'Apr 11 · 12:00',
-    });
-    _saveInbox();
-  }
+// ── STORES (must be initialized before INIT block) ──
+const _founderInbox = (() => {
+  try { return JSON.parse(localStorage.getItem('nodylab_inbox') || 'null') || []; }
+  catch(e) { return []; }
+})();
+const _deliverableStore = (() => {
+  try { return JSON.parse(localStorage.getItem('nodylab_deliverables') || '{}'); } catch(e) { return {}; }
 })();
 
 // ── INIT ──
@@ -3507,6 +3465,7 @@ renderAgentList();
 renderSidebarStatus();
 _initGlobalConfig();
 _updateInboxBadge();
+_updateOverviewStats();
 window._currentAgent = 'ceo';
 window._currentView = 'overview';
 
@@ -3671,11 +3630,6 @@ function closeDrawer() {
 // FOUNDER INBOX
 // ══════════════════════════════════
 
-const _founderInbox = (() => {
-  try { return JSON.parse(localStorage.getItem('nodylab_inbox') || 'null') || _defaultInbox(); }
-  catch(e) { return _defaultInbox(); }
-})();
-
 function _defaultInbox() {
   return [];
 }
@@ -3818,12 +3772,91 @@ function addDeliverablePrompt(taskId) {
 // ══════════════════════════════════════════════════════
 
 // Deliverable store: id → {id,title,content,agentId,agentName,agentColor,agentInitials,timestamp,status}
-const _deliverableStore = (() => {
-  try { return JSON.parse(localStorage.getItem('nodylab_deliverables') || '{}'); } catch(e) { return {}; }
-})();
 function _saveDeliverables() {
   try { localStorage.setItem('nodylab_deliverables', JSON.stringify(_deliverableStore)); } catch(e) {}
 }
+
+// Seed brand sprint data — runs after all stores are declared
+(function _seedBrandSprint() {
+  // 1. Pre-fill brand config if not yet set by user
+  if (!_globalConfig.brand || !_globalConfig.brand.colorPrimary) {
+    _globalConfig.brand = {
+      logoUrl: '',
+      figmaUrl: '',
+      colorPrimary: '#C5F000',
+      colorSecondary: '#0A0A0A',
+      voice: 'Sharp. Human. Confident. Short sentences. Active voice. Numbers over words. No corporate filler. The period after "Lab." is our signature — deliberate, precise, done.',
+      kb: `## Nody Lab. — Brand Knowledge Base
+
+Brand name: Nody Lab. (always with the lime period — it is the mark, not punctuation)
+Tagline: "Your team. Always on."
+Mission: Make elite-calibre business operations accessible to any founder via AI agents.
+
+Colors:
+- Void Black: #0A0A0A (primary background)
+- Electric Lime: #C5F000 (primary accent — CTAs, highlights, the period, active states)
+- Pure White: #FFFFFF (primary text, logo outline)
+- Obsidian: #111111 (card backgrounds)
+- Muted: #888888 (secondary text)
+
+Typography:
+- Display/Headlines: Outfit Bold 700 — uppercase, tight tracking (-0.03em)
+- Body: Inter Regular 400 / Medium 500
+- Code/UI labels: JetBrains Mono 400
+
+Logo: Smiling face inside a TV monitor. White rounded outline, lime green oval eyes and curved smile arc. 4 variants: icon mark, horizontal lockup, stacked lockup, wordmark only. Lime period is non-negotiable in all wordmark variants.
+
+Icon style: 2px stroke, rounded caps, 24×24px grid, minimal geometric. One lime accent element per icon for active states.
+
+Inspiration: landonorris.com — dark background, electric lime sole accent, high contrast, kinetic motion energy applied to B2B AI automation.
+
+Personality: Friendly + Precise + Fast + Confident + Human.
+Voice anti-patterns: No hedging. No passive voice. No filler words. No "leverage synergies". No corporate jargon.`,
+    };
+    try { localStorage.setItem('nodylab_global', JSON.stringify(_globalConfig)); } catch(e) {}
+  }
+
+  // 2. Seed Brand Guidelines deliverable if not present
+  if (!_deliverableStore['dlv-brand-v1']) {
+    _deliverableStore['dlv-brand-v1'] = {
+      id: 'dlv-brand-v1',
+      title: 'Brand Guidelines v1 — NodyLab Visual Identity System',
+      content: `# Nody Lab. — Brand Guidelines v1\n\n## Color System\n- **Void Black** \`#0A0A0A\` — Primary background\n- **Electric Lime** \`#C5F000\` — Primary accent (CTAs, highlights, the period, active states)\n- **Pure White** \`#FFFFFF\` — Primary text, logo outline\n- **Obsidian** \`#111111\` — Card backgrounds\n- **Muted** \`#888888\` — Secondary text\n\n## Typography\n- **Display:** Outfit Bold 700 — uppercase, tracking -0.03em\n- **Body:** Inter Regular 400 / Medium 500 — line-height 1.6\n- **Code/UI:** JetBrains Mono 400\n\n## Logo System\nIcon: Smiling face inside TV monitor — white 5px stroke rounded rectangle, lime oval eyes, lime smile arc.\n\n**4 lockups:**\n1. Icon mark (1:1 square) — app icons, favicons, social avatars\n2. Horizontal — nav bars, email headers\n3. Stacked — square formats, splash screens\n4. Wordmark — "Nody Lab." with lime period — footnotes, watermarks\n\n**Rules:** Never drop the lime period. Never recolor lime elements. Clear space = width of capital N.\n\n## Buttons\n- **Primary:** #C5F000 bg, #0A0A0A text, 8px radius — hover: scale(1.02) + brighter lime\n- **Secondary:** transparent, white 1.5px border, white text\n- **Ghost:** transparent, #888 text — hover: white\n- **Danger:** rgba(240,92,92,0.12) bg, #F05C5C text\n\n## Icon Language\nStyle: 2px stroke, rounded caps/joins, 24×24px grid, 2px padding. Geometric, minimal. One lime element for active state.\n\n**Burger menu:** 3 lines — outer lines full width white, center line 60% width lime. Hover: center extends to full. Open: morphs to × with lime dot.\n\n## Motion\n- **Easing:** cubic-bezier(0.65, 0.05, 0, 1) — sharp in, smooth out (F1 energy)\n- **Micro:** 150ms (hovers), **Standard:** 250ms (panels), **Modal:** 350ms\n\n## Brand Voice\nSharp. Human. Confident.\n- Short sentences — max 12 words for key messages\n- Active voice always — "Agents built this" not "This was built"\n- Numbers over words — "17 agents" not "many agents"\n- The period is intentional — use it as a power move in headlines\n\n**Anti-patterns:** Never hedge. Never passive voice. Never jargon. Never generic.\n\n---\n*Produced by NodyLab CMO Agent · Brand Sprint 2026*`,
+      agentId: 'cmo',
+      agentName: 'CMO Agent',
+      agentColor: 'linear-gradient(135deg,#f5a623,#854f0b)',
+      agentInitials: 'CM',
+      timestamp: 'Apr 11 · 12:00',
+      status: 'pending',
+    };
+    _saveDeliverables();
+  }
+
+  // 3. Seed Inbox with brand approval request if not already there
+  if (!_founderInbox.find(i => i.id === 'inb-brand-v1')) {
+    _founderInbox.unshift({
+      id: 'inb-brand-v1',
+      taskId: 'bs-1',
+      status: 'pending',
+      urgent: true,
+      from: 'CMO Agent',
+      fromInitials: 'CM',
+      fromColor: 'linear-gradient(135deg,#f5a623,#854f0b)',
+      tag: 'Brand Sprint',
+      tagColor: '#C5F000',
+      tagBg: 'rgba(197,240,0,0.1)',
+      title: 'Brand Guidelines v1 — ready for your approval',
+      body: 'I\'ve completed the NodyLab Brand Guidelines v1 based on your logo drafts and landonorris.com inspiration. Covers: color system (#0A0A0A / #C5F000 / #FFFFFF), typography (Outfit + Inter + JetBrains Mono), logo usage rules for all 4 lockups, button specs, icon language, motion system, and brand voice. Art Designer and UX/UI are ready to execute the icon set and component specs as soon as you approve. Your sign-off unlocks the full sprint.',
+      deliverables: [
+        { type:'doc', label:'Brand Guidelines v1', url:'#', deliverableId:'dlv-brand-v1' },
+      ],
+      time: 'Apr 11 · 12:00',
+    });
+    _saveInbox();
+  }
+  // Update badge after seeding
+  _updateInboxBadge();
+})();
 
 // Parse a reply for agentic directives. Returns {cleanText, actions[]}
 function _parseDirectives(reply) {
@@ -4166,10 +4199,94 @@ function _updateOverviewStats() {
   const totalTasks = Object.values(taskData).flat().length;
   const inProgress = taskData.progress.length;
   const pending = _founderInbox.filter(i => i.status === 'pending').length;
+  const activeAgents = agentData.filter(a => a.status !== 'idle').length;
+  const busyAgents = agentData.filter(a => a.status === 'busy' || _agentLiveStatus[a.id]).length;
+
   const taskEl = document.getElementById('stat-tasks');
   const inboxEl = document.getElementById('stat-inbox');
-  if (taskEl) taskEl.textContent = totalTasks;
+  const agentsEl = document.getElementById('stat-agents');
+  if (taskEl) taskEl.textContent = inProgress;
   if (inboxEl) inboxEl.textContent = pending;
+  if (agentsEl) agentsEl.textContent = activeAgents;
+
+  // Nav badges
+  const bMonitor = document.getElementById('badge-monitor');
+  const bRoles = document.getElementById('badge-roles');
+  const bBoard = document.getElementById('badge-board');
+  if (bMonitor) { bMonitor.textContent = busyAgents; bMonitor.style.display = busyAgents ? '' : 'none'; }
+  if (bRoles) { bRoles.textContent = agentData.length; }
+  if (bBoard) {
+    const active = taskData.progress.length + taskData.review.length;
+    bBoard.textContent = active;
+    bBoard.style.display = active ? '' : 'none';
+  }
+
+  // Header pill
+  const pill = document.getElementById('agents-status-pill');
+  if (pill && !window._agentsPaused) {
+    pill.textContent = `${activeAgents} agents online`;
+  }
+}
+
+function exportOverviewReport() {
+  const lines = [
+    '# NodyLab — Sprint Overview Report',
+    `Generated: ${new Date().toLocaleString()}`,
+    '',
+    `## Stats`,
+    `- Active agents: ${agentData.filter(a => a.status !== 'idle').length}`,
+    `- Tasks in progress: ${taskData.progress.length}`,
+    `- In review: ${taskData.review.length}`,
+    `- Done: ${taskData.done.length}`,
+    `- Inbox pending: ${_founderInbox.filter(i => i.status === 'pending').length}`,
+    '',
+    '## Board Tasks',
+    ...Object.entries(taskData).flatMap(([col, tasks]) =>
+      tasks.map(t => `- [${col.toUpperCase()}] ${t.title} (${t.owner || 'unassigned'})`)
+    ),
+  ].join('\n');
+  const blob = new Blob([lines], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'nodylab-sprint-report.md';
+  a.click();
+}
+
+function promptAddTask() {
+  const title = prompt('Task title:');
+  if (!title) return;
+  const owner = prompt('Assign to agent (e.g. CMO Agent, Art Designer):', 'Unassigned') || 'Unassigned';
+  const id = 'task-' + Date.now();
+  taskData.backlog.push({ id, title, tag: 'Manual', tagColor: '#C5F000', tagBg: 'rgba(197,240,0,0.1)', tagTextColor: '#C5F000', owner, priority: 'm' });
+  renderBoard();
+  _updateOverviewStats();
+}
+
+function toggleBoardFilter(btn) {
+  const tags = new Set();
+  Object.values(taskData).flat().forEach(t => { if (t.tag) tags.add(t.tag); });
+  if (tags.size === 0) return;
+  // Cycle through tag filter
+  const current = btn.dataset.filter || '';
+  const tagArr = ['', ...tags];
+  const next = tagArr[(tagArr.indexOf(current) + 1) % tagArr.length];
+  btn.dataset.filter = next;
+  btn.textContent = next ? `Filter: ${next}` : 'Filter';
+  btn.style.color = next ? 'var(--lime)' : '';
+  btn.style.borderColor = next ? 'rgba(197,240,0,0.4)' : '';
+  document.querySelectorAll('.task-card').forEach(card => {
+    if (!next) { card.style.display = ''; return; }
+    card.style.display = (card.dataset.tag === next) ? '' : 'none';
+  });
+}
+
+function clearAgentChat() {
+  const agentId = window._currentAgent;
+  if (!agentId) return;
+  if (!confirm('Clear chat history with this agent?')) return;
+  if (chatHistory[agentId]) { delete chatHistory[agentId]; _saveChat(); }
+  const msgsEl = document.getElementById('chat-msgs');
+  if (msgsEl) msgsEl.innerHTML = `<div style="font-size:11px;color:var(--text3);padding:20px 0;text-align:center;opacity:0.6;">Chat cleared.</div>`;
 }
 // ── PAUSE / RESUME ──
 window._agentsPaused = false;
